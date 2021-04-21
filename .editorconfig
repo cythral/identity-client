@@ -52,10 +52,13 @@ dotnet_diagnostic.SA1009.severity = none
 
 dotnet_analyzer_diagnostic.category-Style.severity = error
 
+# Documentation (temporary)
+dotnet_diagnostic.CS1591.severity = none
+
 dotnet_diagnostic.IDE0058.severity = none
 dotnet_diagnostic.IDE0008.severity = none
 
-[{tests,obj,src/Generator,src/CustomResource.BuildTime,src/Framework.BuildTime}/**.{cs,csx}]
+[{tests,obj/**.{cs,csx}]
 # Unused parameters
 dotnet_diagnostic.CA1801.severity = none
 dotnet_diagnostic.IDE0060.severity = none
