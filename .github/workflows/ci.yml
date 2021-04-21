@@ -1,0 +1,160 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - "master"
+    tags:
+      - "*"
+  pull_request:
+  schedule:
+    - cron: "0 0 * * *"
+
+env:
+  DOTNET_NOLOGO: "true"
+  CONFIGURATION: Release
+  NUGET_FEED_URL: https://api.nuget.org/v3/index.json
+  GITHUB_PACKAGES_FEED_URL: https://nuget.pkg.github.com/cythral/index.json
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Get Commit Message
+        shell: bash
+        run: | # Account for pull request merge commits
+          sha=${{ github.sha }}
+          after=$(git rev-list origin/master..HEAD --max-parents=1 --max-count=1)
+          [ ! `git rev-list --no-walk --count --merges "$sha"` ] || sha=$after
+          echo "COMMIT_MESSAGE=$(git log --format=%B -n 1 $sha | tr '\n' ' ')" >> $GITHUB_ENV
+
+      - name: Set version
+        shell: bash
+        run: echo "VERSION=$(cat version.json | jq -r '.version')" >> $GITHUB_ENV
+
+      - name: Display version
+        run: echo ${{ env.VERSION }}
+
+      - name: Check for Stale Version Number
+        if: ${{ !startsWith(github.ref , 'refs/tags/v') }}
+        shell: bash
+        run: |
+          lastTaggedVersion=$(git describe --abbrev=0 --tags)
+          lastTaggedVersionSha=$(git rev-list -n 1 $lastTaggedVersion)
+          if [ "$lastTaggedVersion" = "v$VERSION" ] && [ "$lastTaggedVersionSha" != "${{ github.sha }}" ]; then exit 1; fi
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+
+      - name: Display .NET Info
+        run: dotnet --info
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Build
+        shell: bash
+        run: dotnet build --no-restore -m -bl:obj/logs/build-${{ matrix.os }}.binlog
+
+      - name: Test
+        run: dotnet test --no-build
+
+      - name: Upload Nugets
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v2
+        with:
+          name: nugets
+          path: bin/Packages/${{ env.CONFIGURATION }}
+
+      - name: Upload Logs
+        uses: actions/upload-artifact@v2
+        with:
+          name: logs-${{ matrix.os }}
+          path: obj/logs/
+
+      - name: Deploy to Github Packages
+        if: matrix.os == 'ubuntu-latest' && github.event_name == 'push'
+        run: dotnet nuget push "bin/Packages/${CONFIGURATION}/*.nupkg" -k ${FEED_TOKEN} -s ${FEED_URL} --skip-duplicate --no-symbols 1
+        env:
+          FEED_TOKEN: ${{ secrets.GH_TOKEN }}
+          FEED_URL: ${{ env.GITHUB_PACKAGES_FEED_URL }}
+
+      - name: Discord Failure Notification
+        uses: Ilshidur/action-discord@master
+        if: failure() && (github.event_name == 'push' || github.event_name == 'schedule')
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          DISCORD_EMBEDS: |
+            [
+              {
+                "title": "[${{ github.repository }}] Build Failed",
+                "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+                "description": "An error occurred while building ${{ github.repository }} ${{ env.VERSION }} on ${{ matrix.os }}",
+                "color": 12720135
+              }
+            ]
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: Production
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Download NuGets
+        uses: actions/download-artifact@v2
+        id: download-nugets
+        with:
+          name: nugets
+
+      - name: Set version
+        shell: bash
+        run: echo "VERSION=$(cat version.json | jq -r '.version')" >> $GITHUB_ENV
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+
+      - name: Display .NET Info
+        run: dotnet --info
+
+      - name: Deploy to NuGet
+        run: dotnet nuget push '${{ steps.download-nugets.outputs.download-path }}/*.nupkg' -k ${FEED_TOKEN} -s ${FEED_URL} --skip-duplicate
+        env:
+          FEED_TOKEN: ${{ secrets.NUGET_TOKEN }}
+          FEED_URL: ${{ env.NUGET_FEED_URL }}
+
+      - uses: ncipollo/release-action@v1
+        with:
+          artifacts: "${{ steps.download-nugets.outputs.download-path }}/*.nupkg,${{ steps.download-nugets.outputs.download-path }}/*.snupkg"
+          bodyFile: ".github/releases/v${{ env.VERSION }}.md"
+          tag: v${{ env.VERSION }}
+          commit: ${{ github.sha }}
+          token: ${{ secrets.GH_TOKEN }}
+          prerelease: ${{ contains(env.VERSION, '-') }}
+
+      - name: Discord Failure Notification
+        uses: Ilshidur/action-discord@master
+        if: failure()
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          DISCORD_EMBEDS: |
+            [
+              {
+                "title": "[${{ github.repository }}] Release Failed",
+                "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+                "description": "An error occurred while releasing ${{ github.repository }} ${{ env.VERSION }}",
+                "color": 12720135
+              }
+            ]

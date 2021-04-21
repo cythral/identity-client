@@ -1,0 +1,49 @@
+name: "CodeQL"
+
+on:
+  push:
+    branches: [master]
+  schedule:
+    - cron: "0 0 * * *"
+
+env:
+  DOTNET_NOLOGO: "true"
+  UPLOAD_LAYER_TEMPLATE: "false"
+
+jobs:
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v1
+
+      - name: Build
+        run: dotnet build
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v1
+
+      - name: Discord Failure Notification
+        uses: Ilshidur/action-discord@master
+        if: failure() && (github.event_name == 'push' || github.event_name == 'schedule')
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          DISCORD_EMBEDS: |
+            [
+              {
+                "title": "[${{ github.repository }}] CodeQL Failed",
+                "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
+                "description": "An error occurred while analyzing ${{ github.repository }}",
+                "color": 12720135
+              }
+            ]

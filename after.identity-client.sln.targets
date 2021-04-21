@@ -1,0 +1,71 @@
+<Project>
+    <Target Name="RestoreTools" AfterTargets="Restore">
+        <Exec
+            Command="dotnet json --help"
+            ConsoleToMsBuild="true"
+            StandardOutputImportance="Low"
+            StandardErrorImportance="Low"
+            IgnoreExitCode="true"
+        >
+            <Output TaskParameter="ExitCode" PropertyName="Tool_JSON_ExitCode" />
+        </Exec>
+
+        <Exec
+            Command="dotnet nbgv --help"
+            ConsoleToMsBuild="true"
+            StandardOutputImportance="Low"
+            StandardErrorImportance="Low"
+            IgnoreExitCode="true"
+        >
+            <Output TaskParameter="ExitCode" PropertyName="Tool_NBGV_ExitCode" />
+        </Exec>
+
+        <Exec
+            Command="dotnet tool restore"
+            ConsoleToMsBuild="true"
+            Condition="$(Tool_JSON_ExitCode) != '0' or $(Tool_NBGV_ExitCode) != '0'"
+        />
+    </Target>
+
+    <Target Name="Format" DependsOnTargets="Restore;RestoreTools">
+        <Exec Command="dotnet format $(MSBuildThisFileDirectory)brighid-discord-adapter.sln --fix-style info" />
+    </Target>
+
+    <Target Name="RetrievePackageVersionFromTool" DependsOnTargets="RestoreTools">
+        <Exec Command="dotnet nbgv get-version -v NuGetPackageVersion" ConsoleToMsBuild="true" StandardOutputImportance="Low">
+            <Output TaskParameter="ConsoleOutput" PropertyName="PackageVersion" />
+        </Exec>
+
+        <ItemGroup>
+            <ChildSolutionProp Include="LambdajectionVersion=$(PackageVersion)" />
+        </ItemGroup>
+    </Target>
+
+    <Target
+        Name="GetReleaseNotes"
+        BeforeTargets="Build"
+        DependsOnTargets="RetrievePackageVersionFromTool"
+        Condition="'$(DesignTimeBuild)' != 'true'"
+    >
+        <Exec Command="dotnet json get $(MSBuildThisFileDirectory)version.json version" ConsoleToMsBuild="true" StandardOutputImportance="Low">
+            <Output TaskParameter="ConsoleOutput" PropertyName="SimpleVersion" />
+        </Exec>
+
+        <PropertyGroup>
+            <ReleaseNotesFile>$(MSBuildThisFileDirectory).github/releases/v$(SimpleVersion).md</ReleaseNotesFile>
+        </PropertyGroup>
+
+        <Error
+            Condition="!Exists('$(ReleaseNotesFile)')"
+            File="$(ReleaseNotesFile)"
+            Text="Release notes file missing."
+        />
+
+        <PropertyGroup>
+            <PackageReleaseNotes>$([System.IO.File]::ReadAllText('$(ReleaseNotesFile)'))</PackageReleaseNotes>
+        </PropertyGroup>
+
+        <Message Importance="High" Text="Version: $(PackageVersion)" />
+        <Message Importance="High" Text="Release Notes:%0A$(PackageReleaseNotes)%0A" />
+    </Target>
+</Project>
