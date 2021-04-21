@@ -47,7 +47,7 @@ jobs:
         if: ${{ !startsWith(github.ref , 'refs/tags/v') }}
         shell: bash
         run: |
-          lastTaggedVersion=$(git describe --abbrev=0 --tags)
+          lastTaggedVersion=$(git describe --abbrev=0 --tags --always)
           lastTaggedVersionSha=$(git rev-list -n 1 $lastTaggedVersion)
           if [ "$lastTaggedVersion" = "v$VERSION" ] && [ "$lastTaggedVersionSha" != "${{ github.sha }}" ]; then exit 1; fi
 
