@@ -16,7 +16,7 @@
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="../ClientGenerator/ClientGenerator.csproj" OutputItemType="Analyzer" />
+    <ProjectReference Include="../ClientGenerator/ClientGenerator.csproj" OutputItemType="Analyzer" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
     <CompilerVisibleProperty Include="TemplateDirectory" />
