@@ -4,9 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Brighid.Identity.Client
 {
-    public class IdentityOptionsBuilder<TServiceType, TImplementation>
-        where TServiceType : class
-        where TImplementation : class, TServiceType
+    public class IdentityOptionsBuilder
     {
         private readonly IServiceCollection services;
         private readonly ConfigurationContext context;
@@ -18,23 +16,22 @@ namespace Brighid.Identity.Client
             context = new ConfigurationContext();
         }
 
-        public IdentityOptionsBuilder<TServiceType, TImplementation> WithIdentityServerUri(Uri identityServerUri)
+        public IdentityOptionsBuilder WithIdentityServerUri(Uri identityServerUri)
         {
             context.IdentityServerUri = identityServerUri;
             return this;
         }
 
-        public IdentityOptionsBuilder<TServiceType, TImplementation> WithBaseAddress(string baseAddress)
+        public IdentityOptionsBuilder WithBaseAddress(string baseAddress)
         {
             context.BaseAddress = baseAddress;
             return this;
         }
 
-        public IdentityOptionsBuilder<TServiceType, TImplementation> WithCredentials<TCredentials>(string sectionName)
-            where TCredentials : class, IClientCredentials
+        public IdentityOptionsBuilder WithCredentials(string sectionName)
         {
             context.ConfigSectionName = sectionName;
-            configurer = new IdentityServicesConfigurer<TServiceType, TImplementation, TCredentials>(services);
+            configurer = new IdentityServicesConfigurer(services);
             return this;
         }
 

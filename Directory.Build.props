@@ -16,6 +16,7 @@
         <Nullable>enable</Nullable>
         <LangVersion>9.0</LangVersion>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
     </PropertyGroup>
 
     <PropertyGroup>
@@ -35,6 +36,7 @@
         <BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)obj/$(MSBuildProjectName)</BaseIntermediateOutputPath>
         <PackageOutputPath>$(MSBuildThisFileDirectory)bin/Packages/$(Configuration)</PackageOutputPath>
         <RestorePackagesPath>$(MSBuildThisFileDirectory).nuget</RestorePackagesPath>
+        <CompilerGeneratedFilesOutputPath>$(MSBuildThisFileDirectory)obj\$(MSBuildProjectName)\$(Configuration)</CompilerGeneratedFilesOutputPath>
     </PropertyGroup>
 
     <ItemGroup Condition="Exists('$(MSBuildThisFileDirectory)\.editorconfig')">
