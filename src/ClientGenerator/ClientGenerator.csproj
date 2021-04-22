@@ -16,9 +16,12 @@
         <CompilerVisibleProperty Include="TemplateDirectory" />
     </ItemGroup>
 
-    <Target Name="GetDependencyTargetPaths">
+    <Target Name="GetDependencyTargetPaths" DependsOnTargets="CopyFilesToOutputDirectory">
         <ItemGroup>
-            <TargetPathWithTargetPlatformMoniker Include="$(OutputPath)*.dll" IncludeRuntimeDependency="false" />
+            <TargetPathWithTargetPlatformMoniker
+                Include="$(OutputPath)*.dll"
+                Exclude="$(OutputPath)ClientGenerator.dll"
+                IncludeRuntimeDependency="false" />
         </ItemGroup>
     </Target>
 </Project>
