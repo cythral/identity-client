@@ -11,9 +11,9 @@ namespace Brighid.Identity.Client
     {
         private readonly TokenCache tokenCache;
         private readonly IdentityServerClient identityServerClient;
-        private readonly ClientCredentials credentials;
+        private readonly IdentityConfig credentials;
 
-        public ClientCredentialsHandler(TokenCache tokenCache, IdentityServerClient identityServerClient, IOptions<ClientCredentials> options)
+        public ClientCredentialsHandler(TokenCache tokenCache, IdentityServerClient identityServerClient, IOptions<IdentityConfig> options)
         {
             this.tokenCache = tokenCache;
             this.identityServerClient = identityServerClient;

@@ -18,7 +18,7 @@ namespace Brighid.Identity.Client
         public class UseBrighidIdentityApplications
         {
             [Test, Auto]
-            public void ShouldAddAnApplicationService(
+            public void ShouldAddAnApplicationServiceWithCorrectBaseUrl(
                 Uri url,
                 string clientId,
                 string clientSecret
@@ -27,6 +27,7 @@ namespace Brighid.Identity.Client
                 var configuration = new ConfigurationBuilder()
                 .AddInMemoryCollection(new Dictionary<string, string>
                 {
+                    ["Identity:IdentityServerUri"] = url.ToString(),
                     ["Identity:ClientId"] = clientId,
                     ["Identity:ClientSecret"] = clientSecret,
                 })
@@ -34,11 +35,7 @@ namespace Brighid.Identity.Client
  
                 var services = new ServiceCollection();
                 services.AddSingleton<IConfiguration>(configuration);
-                services.ConfigureBrighidIdentity(options =>
-                    options.WithIdentityServerUri(url)
-                        .WithBaseAddress(url.ToString())
-                        .WithCredentials("Identity")
-                );
+                services.ConfigureBrighidIdentity("Identity");
 
                 services.UseBrighidIdentityApplications();
 
@@ -46,6 +43,7 @@ namespace Brighid.Identity.Client
                 var applicationsClient = provider.GetRequiredService<IApplicationsClient>();
 
                 applicationsClient.Should().NotBeNull();
+                ((ApplicationsClient)applicationsClient).BaseUrl.Should().Be(url.ToString().TrimEnd('/') + "/api");
             }
         }
     }

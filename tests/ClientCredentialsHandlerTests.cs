@@ -28,7 +28,7 @@ namespace Brighid.Identity.Client
             Token token,
             HttpRequestMessage requestMessage,
             [NotNull, Substitute, Frozen] TokenCache tokenCache,
-            [NotNull, Substitute, Frozen] ClientCredentials clientCredentials,
+            [NotNull, Substitute, Frozen] IdentityConfig clientCredentials,
             [NotNull, Substitute, Frozen] IdentityServerClient identityServerClient,
             [NotNull, Target] ClientCredentialsHandler handler
         )
@@ -60,7 +60,7 @@ namespace Brighid.Identity.Client
             Token token,
             HttpRequestMessage requestMessage,
             [Substitute, Frozen] TokenCache tokenCache,
-            [Substitute, Frozen] ClientCredentials clientCredentials,
+            [Substitute, Frozen] IdentityConfig clientCredentials,
             [Substitute, Frozen] IdentityServerClient identityServerClient,
             [NotNull, Target] ClientCredentialsHandler handler
         )

@@ -1,7 +1,10 @@
+using System;
+
 namespace Brighid.Identity.Client
 {
-    public class ClientCredentials
+    public class IdentityConfig
     {
+        public virtual Uri IdentityServerUri { get; set; } = new Uri("https://identity.brigh.id/");
         public virtual string ClientId { get; set; } = string.Empty;
         public virtual string ClientSecret { get; set; } = string.Empty;
     }

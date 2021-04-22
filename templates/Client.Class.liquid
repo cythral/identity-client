@@ -2,9 +2,6 @@
 [System.CodeDom.Compiler.GeneratedCode("NSwag", "{{ ToolchainVersion }}")]
 {{ ClientClassAccessModifier }} partial class {{ Class }} {% if HasBaseType %}: {% endif %}{% if HasBaseClass %}{{ BaseClass }}{% if GenerateClientInterfaces %}, {% endif %}{% endif %}{% if GenerateClientInterfaces %}I{{ Class }}{% endif %}
 {
-{% if UseBaseUrl and GenerateBaseUrlProperty -%}
-    private string _baseUrl = "{{ BaseUrl }}";
-{% endif -%}
 {% if InjectHttpClient -%}
     private {{ HttpClientType }} _httpClient;
 {% endif -%}
@@ -63,8 +60,8 @@
 {% if UseBaseUrl and GenerateBaseUrlProperty -%}
     public string BaseUrl
     {
-        get { return _baseUrl; }
-        set { _baseUrl = value; }
+        get { return _httpClient?.BaseAddress?.ToString(); }
+        set { _httpClient.BaseAddress = new System.Uri(value); }
     }
 
 {% endif -%}
