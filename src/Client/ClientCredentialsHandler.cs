@@ -7,14 +7,13 @@ using Microsoft.Extensions.Options;
 
 namespace Brighid.Identity.Client
 {
-    public class ClientCredentialsHandler<TOptionsType> : DelegatingHandler
-        where TOptionsType : class, IClientCredentials
+    public class ClientCredentialsHandler : DelegatingHandler
     {
         private readonly TokenCache tokenCache;
         private readonly IdentityServerClient identityServerClient;
-        private readonly TOptionsType credentials;
+        private readonly ClientCredentials credentials;
 
-        public ClientCredentialsHandler(TokenCache tokenCache, IdentityServerClient identityServerClient, IOptions<TOptionsType> options)
+        public ClientCredentialsHandler(TokenCache tokenCache, IdentityServerClient identityServerClient, IOptions<ClientCredentials> options)
         {
             this.tokenCache = tokenCache;
             this.identityServerClient = identityServerClient;

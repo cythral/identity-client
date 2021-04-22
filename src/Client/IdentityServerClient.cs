@@ -17,6 +17,8 @@ namespace Brighid.Identity.Client
             this.httpClient = httpClient;
         }
 
+        public Uri? BaseAddress { get => httpClient.BaseAddress; set => httpClient.BaseAddress = value; }
+
         public virtual async Task<Token> ExchangeClientCredentialsForToken(string clientId, string clientSecret, CancellationToken cancellationToken = default)
         {
             var formData = (IEnumerable<KeyValuePair<string?, string?>>)new Dictionary<string, string?>
