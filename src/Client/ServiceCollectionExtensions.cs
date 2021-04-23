@@ -17,7 +17,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.Configure<IdentityConfig>(section);
             services.TryAddSingleton<TokenCache>();
             services.TryAddScoped<IdentityServerClient>();
-            services.TryAddScoped<ClientCredentialsHandler>();
+            services.TryAddTransient<ClientCredentialsHandler>();
 
             var identityServerUri = section.GetValue("IdentityServerUri", new Uri("http://identity.brigh.id"));
 
