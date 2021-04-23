@@ -53,7 +53,7 @@ namespace Brighid.Identity.ClientGenerator
             }
 
             var client = new HttpClient();
-            var swaggerString = await client.GetStringAsync("http://localhost/swagger/v1/swagger.json");
+            var swaggerString = await client.GetStringAsync("https://identity.brigh.id/swagger/v1/swagger.json");
             var document = await OpenApiDocument.FromJsonAsync(swaggerString);
             var settings = new CSharpClientGeneratorSettings
             {
