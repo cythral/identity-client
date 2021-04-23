@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 using AutoFixture.AutoNSubstitute;
 using AutoFixture.NUnit3;
 
-using FluentAssertions;
-
 using NSubstitute;
 
 using NUnit.Framework;
@@ -23,75 +21,14 @@ namespace Brighid.Identity.Client
     [Category("Unit")]
     public class ClientCredentialsHandlerTests
     {
-        [Test, Auto]
-        public async Task SendAsync_ShouldRetrieveTokenAndStoreIt_IfItsNotInTheCache(
-            Token token,
-            HttpRequestMessage requestMessage,
-            [NotNull, Substitute, Frozen] TokenCache tokenCache,
-            [NotNull, Substitute, Frozen] IdentityConfig clientCredentials,
-            [NotNull, Substitute, Frozen] IdentityServerClient identityServerClient,
-            [NotNull, Target] ClientCredentialsHandler handler
-        )
-        {
-            var cancellationToken = new CancellationToken(false);
-            using var mockHttp = new MockHttpMessageHandler();
-            handler.InnerHandler = mockHttp;
-
-            using var invoker = new HttpMessageInvoker(handler);
-            tokenCache.Token.Returns((Token?)null);
-            identityServerClient
-            .ExchangeClientCredentialsForToken(Any<string>(), Any<string>(), Any<CancellationToken>())
-            .Returns(token);
-
-            await invoker.SendAsync(requestMessage, cancellationToken);
-
-            tokenCache.Token.Should().Be(token);
-            await identityServerClient.Received().ExchangeClientCredentialsForToken(
-                Is(clientCredentials.ClientId),
-                Is(clientCredentials.ClientSecret),
-                Is(cancellationToken)
-            );
-        }
-
-        [Test, Auto]
-        public async Task SendAsync_ShouldNotRetrieveToken_IfItsInTheCache(
-            string response,
-            Uri uri,
-            Token token,
-            HttpRequestMessage requestMessage,
-            [Substitute, Frozen] TokenCache tokenCache,
-            [Substitute, Frozen] IdentityConfig clientCredentials,
-            [Substitute, Frozen] IdentityServerClient identityServerClient,
-            [NotNull, Target] ClientCredentialsHandler handler
-        )
-        {
-            var cancellationToken = new CancellationToken(false);
-            using var mockHttp = new MockHttpMessageHandler();
-            handler.InnerHandler = mockHttp;
-            mockHttp
-            .Expect(uri.ToString())
-            .Respond("text/plain", response);
-
-
-            using var invoker = new HttpMessageInvoker(handler);
-            tokenCache.Token.Returns(token);
-
-            await invoker.SendAsync(requestMessage, cancellationToken);
-
-            await identityServerClient.DidNotReceive().ExchangeClientCredentialsForToken(
-                Is(clientCredentials.ClientId),
-                Is(clientCredentials.ClientSecret),
-                Is(cancellationToken)
-            );
-        }
 
         [Test, Auto]
         public async Task SendAsync_AttachesIdentityToken_ToRequests(
             string response,
             Uri uri,
-            Token token,
+            string token,
             HttpRequestMessage requestMessage,
-            [NotNull, Substitute, Frozen] TokenCache tokenCache,
+            [NotNull, Substitute, Frozen] ITokenStore tokenStore,
             [NotNull, Target] ClientCredentialsHandler handler
         )
         {
@@ -100,15 +37,16 @@ namespace Brighid.Identity.Client
             handler.InnerHandler = mockHttp;
             mockHttp
             .Expect(uri.ToString())
-            .WithHeaders("Authorization", $"Bearer {token.IdToken}")
+            .WithHeaders("Authorization", $"Bearer {token}")
             .Respond("text/plain", response);
 
             using var invoker = new HttpMessageInvoker(handler);
-            tokenCache.Token.Returns(token);
+            tokenStore.GetIdToken(Any<CancellationToken>()).Returns(token);
 
             requestMessage.RequestUri = uri;
             await invoker.SendAsync(requestMessage, cancellationToken);
 
+            await tokenStore.Received().GetIdToken(Is(cancellationToken));
             mockHttp.VerifyNoOutstandingExpectation();
         }
     }

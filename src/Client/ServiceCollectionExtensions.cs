@@ -15,7 +15,7 @@ namespace Microsoft.Extensions.DependencyInjection
             var config = services.BuildServiceProvider().GetRequiredService<IConfiguration>();
             var section = config.GetSection(sectionName);
             services.Configure<IdentityConfig>(section);
-            services.TryAddSingleton<TokenCache>();
+            services.TryAddSingleton<ITokenStore, TokenStore>();
             services.TryAddScoped<IdentityServerClient>();
             services.TryAddTransient<ClientCredentialsHandler>();
 

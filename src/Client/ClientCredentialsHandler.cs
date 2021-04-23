@@ -3,30 +3,21 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Microsoft.Extensions.Options;
-
 namespace Brighid.Identity.Client
 {
     public class ClientCredentialsHandler : DelegatingHandler
     {
-        private readonly TokenCache tokenCache;
-        private readonly IdentityServerClient identityServerClient;
-        private readonly IdentityConfig credentials;
+        private readonly ITokenStore tokenStore;
 
-        public ClientCredentialsHandler(TokenCache tokenCache, IdentityServerClient identityServerClient, IOptions<IdentityConfig> options)
+        public ClientCredentialsHandler(ITokenStore tokenStore)
         {
-            this.tokenCache = tokenCache;
-            this.identityServerClient = identityServerClient;
-            credentials = options.Value;
+            this.tokenStore = tokenStore;
         }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage requestMessage, CancellationToken cancellationToken = default)
         {
-            tokenCache.Token ??= await identityServerClient
-                .ExchangeClientCredentialsForToken(credentials.ClientId, credentials.ClientSecret, cancellationToken)
-                .ConfigureAwait(false);
-
-            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", tokenCache.Token.IdToken);
+            var token = await tokenStore.GetIdToken(cancellationToken);
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
             return await base.SendAsync(requestMessage, cancellationToken).ConfigureAwait(false);
         }
     }
