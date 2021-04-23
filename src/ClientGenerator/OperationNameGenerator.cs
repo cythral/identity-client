@@ -31,7 +31,7 @@ namespace Brighid.Identity.ClientGenerator
         /// <returns>The operation name.</returns>
         public virtual string GetOperationName(OpenApiDocument document, string path, string httpMethod, OpenApiOperation operation)
         {
-            return httpMethod;
+            return operation.OperationId?.Split(':').ElementAtOrDefault(1) ?? httpMethod;
         }
 
         /// <summary>Converts the path to an operation name.</summary>
