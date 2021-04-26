@@ -10,7 +10,7 @@ env:
   CONFIGURATION: Release
   NUKEEPER: "true"
   FEED_URL: https://nuget.pkg.github.com/cythral/index.json
-  REPO_URL: https://github.com/cythral/lambdajection.git
+  REPO_URL: https://github.com/cythral/identity-client.git
 
 jobs:
   build:
@@ -25,7 +25,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
-          
+
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
