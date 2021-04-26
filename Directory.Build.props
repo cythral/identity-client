@@ -43,7 +43,7 @@
     <None Include="$(MSBuildThisFileDirectory)LICENSE.txt" Pack="true" PackagePath="LICENSE.txt" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Nerdbank.GitVersioning" Version="3.4.194" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeStyle" Version="3.9.0" PrivateAssets="all" />
-    <PackageReference Include="Nerdbank.GitVersioning" Version="3.3.37" PrivateAssets="all" />
   </ItemGroup>
 </Project>
