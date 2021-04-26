@@ -39,9 +39,9 @@
       },
       "Microsoft.CodeAnalysis.CSharp.CodeStyle": {
         "type": "Direct",
-        "requested": "[3.8.0-5.final, )",
-        "resolved": "3.8.0-5.final",
-        "contentHash": "fc0GooFJCJUbAXuatlAhKJw3Uv3ZL9p3zVVn+Ew4U8q0jZY+aTa1fRtn1IrjeZx7rbzNrrQbJX8S90VZhOwJ/g=="
+        "requested": "[4.0.0-2.21224.20, )",
+        "resolved": "4.0.0-2.21224.20",
+        "contentHash": "sNMGsdNOzGDdoFSt1TWAeHalSRXikNoQknxW2bMHxbvp3VoqRn4oHXJiiWEyROx1DLjhERG76Rvshqjw/4jPBg=="
       },
       "Microsoft.NET.Test.Sdk": {
         "type": "Direct",
