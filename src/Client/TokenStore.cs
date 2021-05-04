@@ -46,6 +46,12 @@ namespace Brighid.Identity.Client
             return result ?? throw new OperationCanceledException("Credentials could not be exchanged for a token.");
         }
 
+        /// <inheritdoc />
+        public void InvalidateToken()
+        {
+            Token = null;
+        }
+
         /// <summary>
         /// No more than one task should exchange a token at a time, so GetIdToken puts a request in a queue, which
         /// Run picks up and responds to.
