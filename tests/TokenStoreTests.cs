@@ -92,5 +92,30 @@ namespace Brighid.Identity.Client
                 await client.Received().ExchangeClientCredentialsForToken(Is(clientCredentials.ClientId), Is(clientCredentials.ClientSecret), Any<CancellationToken>());
             }
         }
+
+        [TestFixture]
+        public class InvalidateTokenTests
+        {
+            [Test, Auto]
+            public async Task ShouldCauseSubsequentRequestsToRefetchToken(
+                Token token,
+                [Frozen, Substitute] IdentityServerClient client,
+                [Frozen, Substitute] IdentityConfig clientCredentials,
+                [Target] TokenStore store
+            )
+            {
+                client.ExchangeClientCredentialsForToken(Any<string>(), Any<string>(), Any<CancellationToken>()).Returns(token);
+
+                var cancellationToken = new CancellationToken();
+                await store.GetIdToken(cancellationToken);
+
+                await client.Received().ExchangeClientCredentialsForToken(Is(clientCredentials.ClientId), Is(clientCredentials.ClientSecret), Any<CancellationToken>());
+                client.ClearReceivedCalls();
+
+                store.InvalidateToken();
+                await store.GetIdToken(cancellationToken);
+                await client.Received().ExchangeClientCredentialsForToken(Is(clientCredentials.ClientId), Is(clientCredentials.ClientSecret), Any<CancellationToken>());
+            }
+        }
     }
 }
