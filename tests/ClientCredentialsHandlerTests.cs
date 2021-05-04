@@ -95,14 +95,17 @@ namespace Brighid.Identity.Client
         }
 
         [Test, Auto]
-        public async Task SendAsync_ShouldThrowRefreshTokenException_IfMaxTriesIsReached(
+        public async Task SendAsync_ShouldThrowRefreshTokenException_IfMaxAttemptsIsReached(
             Uri uri,
             string outdatedToken,
             HttpRequestMessage requestMessage,
+            [Frozen] IdentityConfig config,
             [NotNull, Substitute, Frozen] ITokenStore tokenStore,
             [NotNull, Target] ClientCredentialsHandler handler
         )
         {
+            config.MaxRefreshAttempts = 3;
+            
             var cancellationToken = new CancellationToken(false);
             using var mockHttp = new MockHttpMessageHandler();
             handler.InnerHandler = mockHttp;
