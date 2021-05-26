@@ -24,7 +24,9 @@ namespace Brighid.Identity.Client
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage requestMessage, CancellationToken cancellationToken = default)
         {
-            return await SendAsyncSemaphore(requestMessage, cancellationToken: cancellationToken);
+            return requestMessage.Headers.Contains("authorization")
+                ? await base.SendAsync(requestMessage, cancellationToken)
+                : await SendAsyncSemaphore(requestMessage, cancellationToken: cancellationToken);
         }
 
         private async Task<HttpResponseMessage> SendAsyncSemaphore(HttpRequestMessage requestMessage, int @try = 1, CancellationToken cancellationToken = default)

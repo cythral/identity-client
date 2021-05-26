@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,6 +25,31 @@ namespace Brighid.Identity.Client
     [Category("Unit")]
     public class ClientCredentialsHandlerTests
     {
+        [Test, Auto]
+        public async Task SendAsync_ShouldUseDefaultToken_IfGiven(
+            string response,
+            Uri uri,
+            string token,
+            HttpRequestMessage requestMessage,
+            [NotNull, Target] ClientCredentialsHandler handler
+        )
+        {
+            var cancellationToken = new CancellationToken(false);
+            using var mockHttp = new MockHttpMessageHandler();
+            handler.InnerHandler = mockHttp;
+            mockHttp
+            .Expect(uri.ToString())
+            .WithHeaders("Authorization", $"Bearer {token}")
+            .Respond("text/plain", response);
+
+            using var client = new HttpClient(handler);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            requestMessage.RequestUri = uri;
+            await client.SendAsync(requestMessage, cancellationToken);
+
+            mockHttp.VerifyNoOutstandingExpectation();
+        }
 
         [Test, Auto]
         public async Task SendAsync_AttachesIdentityToken_ToRequests(

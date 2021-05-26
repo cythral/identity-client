@@ -3,6 +3,16 @@
 public partial interface I{{ Class }}{% if HasClientBaseInterface %} : {{ ClientBaseInterface }}{% endif %}
 {
     {% template Client.Interface.Body %}
+
+#nullable enable
+    /// <summary>
+    /// Gets or sets the Bearer token to be sent with the request.  If set,
+    /// the client credentials will not be used to fetch or refresh the token.
+    /// If the given token expires, you must manually handle setting a new one.
+    /// </summary>
+    string? Token { set; }
+#nullable disable
+
 {% for operation in InterfaceOperations -%}
 {%   if GenerateOptionalParameters == false -%}
     {% template Client.Method.Documentation %}
