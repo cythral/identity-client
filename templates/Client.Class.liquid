@@ -42,6 +42,22 @@
         {% template Client.Class.Constructor %}
     }
 
+#nullable enable
+    public string? Token
+    {
+        set
+        {
+            if (value == null)
+            {
+                _httpClient.DefaultRequestHeaders.Remove("authorization");
+                return;
+            }
+
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", value);
+        }
+    }
+#nullable disable 
+
     private {{ JsonSerializerSettingsType }} CreateSerializerSettings({% if UseRequestAndResponseSerializationSettings %}bool isRequest{% endif %})
     {
         var settings = {{ JsonSerializerParameterCode }};
