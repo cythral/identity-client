@@ -36,7 +36,7 @@ namespace Brighid.Identity.Client
                 throw new TokenRefreshException();
             }
 
-            var token = await tokenStore.GetIdToken(cancellationToken);
+            var token = await tokenStore.GetToken(cancellationToken);
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var response = await base.SendAsync(requestMessage, cancellationToken).ConfigureAwait(false);

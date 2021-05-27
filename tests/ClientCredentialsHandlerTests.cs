@@ -70,12 +70,12 @@ namespace Brighid.Identity.Client
             .Respond("text/plain", response);
 
             using var invoker = new HttpMessageInvoker(handler);
-            tokenStore.GetIdToken(Any<CancellationToken>()).Returns(token);
+            tokenStore.GetToken(Any<CancellationToken>()).Returns(token);
 
             requestMessage.RequestUri = uri;
             await invoker.SendAsync(requestMessage, cancellationToken);
 
-            await tokenStore.Received().GetIdToken(Is(cancellationToken));
+            await tokenStore.Received().GetToken(Is(cancellationToken));
             mockHttp.VerifyNoOutstandingExpectation();
         }
 
@@ -103,7 +103,7 @@ namespace Brighid.Identity.Client
             .Respond(HttpStatusCode.OK);
 
             using var invoker = new HttpMessageInvoker(handler);
-            tokenStore.GetIdToken(Any<CancellationToken>()).Returns(outdatedToken, upToDateToken);
+            tokenStore.GetToken(Any<CancellationToken>()).Returns(outdatedToken, upToDateToken);
 
             requestMessage.RequestUri = uri;
             var response = await invoker.SendAsync(requestMessage, cancellationToken);
@@ -112,9 +112,9 @@ namespace Brighid.Identity.Client
 
             Received.InOrder(() =>
             {
-                tokenStore.GetIdToken(Is(cancellationToken));
+                tokenStore.GetToken(Is(cancellationToken));
                 tokenStore.InvalidateToken();
-                tokenStore.GetIdToken(Is(cancellationToken));
+                tokenStore.GetToken(Is(cancellationToken));
             });
 
             mockHttp.VerifyNoOutstandingExpectation();
@@ -141,7 +141,7 @@ namespace Brighid.Identity.Client
             .Respond(HttpStatusCode.Unauthorized);
 
             using var invoker = new HttpMessageInvoker(handler);
-            tokenStore.GetIdToken(Any<CancellationToken>()).Returns(outdatedToken);
+            tokenStore.GetToken(Any<CancellationToken>()).Returns(outdatedToken);
 
             requestMessage.RequestUri = uri;
             Func<Task> func = () => invoker.SendAsync(requestMessage, cancellationToken);
@@ -150,11 +150,11 @@ namespace Brighid.Identity.Client
 
             Received.InOrder(() =>
             {
-                tokenStore.GetIdToken(Is(cancellationToken));
+                tokenStore.GetToken(Is(cancellationToken));
                 tokenStore.InvalidateToken();
-                tokenStore.GetIdToken(Is(cancellationToken));
+                tokenStore.GetToken(Is(cancellationToken));
                 tokenStore.InvalidateToken();
-                tokenStore.GetIdToken(Is(cancellationToken));
+                tokenStore.GetToken(Is(cancellationToken));
                 tokenStore.InvalidateToken();
             });
 

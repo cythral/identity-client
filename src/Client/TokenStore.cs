@@ -35,7 +35,7 @@ namespace Brighid.Identity.Client
         }
 
         /// <inheritdoc />
-        public async Task<string> GetIdToken(CancellationToken cancellationToken = default)
+        public async Task<string> GetToken(CancellationToken cancellationToken = default)
         {
             this.cancellationToken.ThrowIfCancellationRequested();
             cancellationToken.ThrowIfCancellationRequested();
@@ -77,7 +77,8 @@ namespace Brighid.Identity.Client
                         Token = await client.ExchangeClientCredentialsForToken(options.ClientId, options.ClientSecret, cancellationToken);
                     }
 
-                    await writer.WriteAsync(Token.IdToken, cancellationToken);
+                    // TODO: Verify ID Token
+                    await writer.WriteAsync(Token.AccessToken, cancellationToken);
                 }
                 catch (Exception)
                 {
