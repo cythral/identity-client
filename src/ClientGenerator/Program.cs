@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -52,7 +53,11 @@ namespace Brighid.Identity.ClientGenerator
                 throw new System.Exception("Template Directory should be defined.");
             }
 
-            var client = new HttpClient();
+            var client = new HttpClient
+            {
+                DefaultRequestVersion = new Version(2, 0),
+            };
+
             var swaggerString = await client.GetStringAsync("https://identity.brigh.id/swagger/v1/swagger.json");
             var document = await OpenApiDocument.FromJsonAsync(swaggerString);
             var settings = new CSharpClientGeneratorSettings

@@ -13,7 +13,7 @@ namespace Brighid.Identity.Client
         /// </summary>
         /// <param name="cancellationToken">Token used to cancel the operation.</param>
         /// <returns>The resulting token.</returns>
-        Task<string> GetIdToken(CancellationToken cancellationToken = default);
+        Task<string> GetToken(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Invalidates a token and causes a new one to be generated the next time the token is requested.
