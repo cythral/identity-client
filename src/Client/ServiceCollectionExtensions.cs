@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Net.Http;
 
 using Brighid.Identity.Client;
@@ -13,30 +12,21 @@ namespace Microsoft.Extensions.DependencyInjection
     public static partial class ServiceCollectionExtensions
     {
         private const string DefaultIdentityServerUri = "http://identity.brigh.id";
-        public static void ConfigureBrighidIdentity(this IServiceCollection services, string sectionName)
+        public static void ConfigureBrighidIdentity(this IServiceCollection services, IConfiguration configuration)
         {
-            var config = (IConfiguration)(from service in services
-                                          where service.ServiceType == typeof(IConfiguration)
-                                          select service.ImplementationInstance).First();
-
-            var section = config.GetSection(sectionName);
-            services.Configure<IdentityConfig>(section);
-            services.ConfigureBrighidIdentity<IdentityConfig>(sectionName);
+            services.Configure<IdentityConfig>(configuration);
+            services.ConfigureBrighidIdentity<IdentityConfig>(configuration);
         }
 
-        public static void ConfigureBrighidIdentity<TConfig>(this IServiceCollection services, string sectionName)
+        public static void ConfigureBrighidIdentity<TConfig>(this IServiceCollection services, IConfiguration configuration)
             where TConfig : IdentityConfig
         {
-            var config = (IConfiguration)(from service in services
-                                          where service.ServiceType == typeof(IConfiguration)
-                                          select service.ImplementationInstance).First();
-
+            var config = services.BuildServiceProvider().GetRequiredService<IConfiguration>();
             services.TryAddSingleton<ITokenStore, TokenStore<TConfig>>();
             services.TryAddScoped<IdentityServerClient>();
             services.TryAddTransient<DelegatingHandler, ClientCredentialsHandler<TConfig>>();
 
-            var section = config.GetSection(sectionName);
-            var identityServerUri = section.GetValue("IdentityServerUri", new Uri(DefaultIdentityServerUri));
+            var identityServerUri = configuration.GetValue("IdentityServerUri", new Uri(DefaultIdentityServerUri));
 
             services
             .AddHttpClient<IdentityServerClient>(options => options.BaseAddress = identityServerUri)

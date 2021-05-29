@@ -76,7 +76,7 @@ namespace Brighid.Identity.Client
             serviceCollection.AddSingleton<HttpMessageHandler>(mockHandler);
             serviceCollection.AddSingleton<IConfiguration>(configuration);
             serviceCollection.AddSingleton<ITestIdentityService, TestIdentityService>();
-            serviceCollection.ConfigureBrighidIdentity<CustomIdentityConfig>("Identity");
+            serviceCollection.ConfigureBrighidIdentity<CustomIdentityConfig>(configuration.GetSection("Identity"));
             serviceCollection.UseBrighidIdentity<ITestIdentityService, TestIdentityService>(baseServiceAddress);
             serviceCollection.Configure<CustomIdentityConfig>(configuration.GetSection("Identity"));
 
