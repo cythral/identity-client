@@ -33,3 +33,18 @@ public partial interface I{{ Class }}{% if HasClientBaseInterface %} : {{ Client
 
 {% endfor -%}
 }
+
+[System.CodeDom.Compiler.GeneratedCode("NSwag", "{{ ToolchainVersion }}")]
+public partial interface I{{ Class }}Factory{% if HasClientBaseInterface %} : {{ ClientBaseInterface }}{% endif %}
+{
+    /// <summary>
+    /// Creates a new <see iref="I{{ Class }}" /> instance.
+    /// </summary>
+    I{{ Class }} Create();
+
+    /// <summary>
+    /// Creates a new <see iref="I{{ Class }}" /> instance using the given <paramref name="token" />.
+    /// </summary>
+    /// <param name="token">Token to use in the client.</param>
+    I{{ Class }} Create(string token);
+}

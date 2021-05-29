@@ -50,7 +50,7 @@ namespace Brighid.Identity.ClientGenerator
             context.AnalyzerConfigOptions.GlobalOptions.TryGetValue("build_property.TemplateDirectory", out var templateDirectory);
             if (templateDirectory == null)
             {
-                throw new System.Exception("Template Directory should be defined.");
+                throw new Exception("Template Directory should be defined.");
             }
 
             var client = new HttpClient
@@ -87,7 +87,10 @@ namespace Brighid.Identity.ClientGenerator
             var tree = CSharpSyntaxTree.ParseText(code);
             var treeRoot = tree.GetCompilationUnitRoot();
             var interfaces = treeRoot.DescendantNodes().OfType<InterfaceDeclarationSyntax>();
-            var interfaceNames = from iface in interfaces select iface.Identifier.ValueText;
+            var interfaceNames = from iface in interfaces
+                                 let name = iface.Identifier.ValueText
+                                 where !name.EndsWith("Factory")
+                                 select iface.Identifier.ValueText;
 
             var codes = ignoredCodes.Select(code => ParseExpression(code));
             var ignoreWarningsTrivia = Trivia(PragmaWarningDirectiveTrivia(Token(DisableKeyword), SeparatedList(codes), true));
@@ -133,7 +136,9 @@ namespace Brighid.Identity.ClientGenerator
         {
             yield return ParseStatement("var baseUri = GetIdentityServerApiBaseUri(services);");
             yield return ParseStatement($"services.TryAddSingleton<{interfaceName}, {implementationName}>();");
+            yield return ParseStatement($"services.TryAddSingleton<{interfaceName}Factory, {implementationName}Factory>();");
             yield return ParseStatement($"services.UseBrighidIdentity<{interfaceName}, {implementationName}>(baseUri);");
+            yield return ParseStatement($"services.UseBrighidIdentity<{interfaceName}Factory, {implementationName}Factory>(baseUri);");
         }
     }
 }

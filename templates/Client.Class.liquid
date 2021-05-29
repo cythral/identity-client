@@ -418,3 +418,28 @@
     {% template Client.Class.ConvertToString %}
     {% template Client.Class.Body %}
 }
+
+/// <inheritdoc />
+{{ ClientClassAccessModifier }} class {{ Class }}Factory : I{{ Class }}Factory
+{
+    private readonly System.Net.Http.HttpClient httpClient;
+    
+    public {{ Class }}Factory(System.Net.Http.HttpClient httpClient)
+    {
+        this.httpClient = httpClient;
+    }
+
+    /// <inheritdoc />
+    public I{{ Class }} Create()
+    {
+        return new {{ Class }}(httpClient);
+    }
+
+    /// <inheritdoc />
+    public I{{ Class }} Create(string token)
+    {
+        var instance = new {{ Class }}(httpClient);
+        instance.Token = token;
+        return instance;
+    }
+}
