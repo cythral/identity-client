@@ -31,7 +31,7 @@ namespace Brighid.Identity.Client
             Uri uri,
             string token,
             HttpRequestMessage requestMessage,
-            [NotNull, Target] ClientCredentialsHandler handler
+            [NotNull, Target] ClientCredentialsHandler<IdentityConfig> handler
         )
         {
             var cancellationToken = new CancellationToken(false);
@@ -58,7 +58,7 @@ namespace Brighid.Identity.Client
             string token,
             HttpRequestMessage requestMessage,
             [NotNull, Substitute, Frozen] ITokenStore tokenStore,
-            [NotNull, Target] ClientCredentialsHandler handler
+            [NotNull, Target] ClientCredentialsHandler<IdentityConfig> handler
         )
         {
             var cancellationToken = new CancellationToken(false);
@@ -86,7 +86,7 @@ namespace Brighid.Identity.Client
             string upToDateToken,
             HttpRequestMessage requestMessage,
             [NotNull, Substitute, Frozen] ITokenStore tokenStore,
-            [NotNull, Target] ClientCredentialsHandler handler
+            [NotNull, Target] ClientCredentialsHandler<IdentityConfig> handler
         )
         {
             var cancellationToken = new CancellationToken(false);
@@ -127,7 +127,7 @@ namespace Brighid.Identity.Client
             HttpRequestMessage requestMessage,
             [Frozen] IdentityConfig config,
             [NotNull, Substitute, Frozen] ITokenStore tokenStore,
-            [NotNull, Target] ClientCredentialsHandler handler
+            [NotNull, Target] ClientCredentialsHandler<IdentityConfig> handler
         )
         {
             config.MaxRefreshAttempts = 3;

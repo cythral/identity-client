@@ -8,14 +8,15 @@ using Microsoft.Extensions.Options;
 
 namespace Brighid.Identity.Client
 {
-    public class ClientCredentialsHandler : DelegatingHandler
+    public class ClientCredentialsHandler<TConfig> : DelegatingHandler
+        where TConfig : IdentityConfig
     {
         private readonly ITokenStore tokenStore;
-        private readonly IdentityConfig config;
+        private readonly TConfig config;
 
         public ClientCredentialsHandler(
             ITokenStore tokenStore,
-            IOptions<IdentityConfig> config
+            IOptions<TConfig> config
         )
         {
             this.tokenStore = tokenStore;

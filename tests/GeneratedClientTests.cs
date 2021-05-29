@@ -5,12 +5,6 @@ using FluentAssertions;
 
 using NUnit.Framework;
 
-// if (value == null)
-// {
-//     _httpClient.DefaultRequestHeaders.Remove("authorization");
-//     return;
-// }
-
 namespace Brighid.Identity.Client
 {
 #pragma warning disable IDE0055, IDE0017
