@@ -42,7 +42,6 @@ namespace Brighid.Identity.ClientGenerator
             return path
                 .Split('/')
                 .Where(p => !p.Contains("{") && !string.IsNullOrWhiteSpace(p))
-                .Reverse()
                 .FirstOrDefault() ?? "Index";
         }
     }
