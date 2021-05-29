@@ -8,7 +8,8 @@ using Microsoft.Extensions.Options;
 namespace Brighid.Identity.Client
 {
     /// <inheritdoc />
-    public class TokenStore : ITokenStore, IDisposable
+    public class TokenStore<TConfig> : ITokenStore, IDisposable
+        where TConfig : IdentityConfig
     {
         private readonly IdentityServerClient client;
         private readonly IdentityConfig options;
@@ -19,13 +20,13 @@ namespace Brighid.Identity.Client
         private Token? Token { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TokenStore" /> class.
+        /// Initializes a new instance of the <see cref="TokenStore{TConfig}" /> class.
         /// </summary>
         /// <param name="client">Client used to exchange client credentials for tokens with.</param>
         /// <param name="options">Options containing client credentials.</param>
         public TokenStore(
             IdentityServerClient client,
-            IOptions<IdentityConfig> options
+            IOptions<TConfig> options
         )
         {
             this.client = client;

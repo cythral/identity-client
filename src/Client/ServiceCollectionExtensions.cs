@@ -31,7 +31,7 @@ namespace Microsoft.Extensions.DependencyInjection
                                           where service.ServiceType == typeof(IConfiguration)
                                           select service.ImplementationInstance).First();
 
-            services.TryAddSingleton<ITokenStore, TokenStore>();
+            services.TryAddSingleton<ITokenStore, TokenStore<TConfig>>();
             services.TryAddScoped<IdentityServerClient>();
             services.TryAddTransient<DelegatingHandler, ClientCredentialsHandler<TConfig>>();
 

@@ -14,6 +14,9 @@ namespace Brighid.Identity.Client
 {
     public class CustomIdentityConfig : IdentityConfig
     {
+        public override string ClientId { get; set; } = string.Empty;
+
+        public override string ClientSecret { get; set; } = string.Empty;
     }
 
     public interface ITestIdentityService
@@ -43,7 +46,9 @@ namespace Brighid.Identity.Client
         public async Task PreconfiguredFlow(
             Uri baseIdpAddress,
             Uri baseServiceAddress,
-            string accessToken
+            string accessToken,
+            string clientId,
+            string clientSecret
         )
         {
             var serviceCollection = new ServiceCollection();
@@ -51,11 +56,16 @@ namespace Brighid.Identity.Client
             .AddInMemoryCollection(new Dictionary<string, string>
             {
                 ["Identity:IdentityServerUri"] = baseIdpAddress.ToString(),
+                ["Identity:ClientId"] = clientId,
+                ["Identity:ClientSecret"] = clientSecret,
             }).Build();
 
             var mockHandler = new MockHttpMessageHandler();
             mockHandler
             .Expect(HttpMethod.Post, $"{baseIdpAddress}oauth2/token")
+            .WithFormData("client_id", clientId)
+            .WithFormData("client_secret", clientSecret)
+            .WithFormData("grant_type", "client_credentials")
             .Respond("application/json", $@"{{""access_token"":""{accessToken}""}}");
 
             mockHandler

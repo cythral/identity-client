@@ -26,7 +26,7 @@ namespace Brighid.Identity.Client
                 Token token,
                 [Frozen, Substitute] IdentityServerClient client,
                 [Frozen, Substitute] IdentityConfig clientCredentials,
-                [Target] TokenStore store
+                [Target] TokenStore<IdentityConfig> store
             )
             {
                 var cancellationToken = new CancellationToken();
@@ -43,7 +43,7 @@ namespace Brighid.Identity.Client
                 Token token,
                 [Frozen, Substitute] IdentityServerClient client,
                 [Frozen, Substitute] IdentityConfig clientCredentials,
-                [Target] TokenStore store
+                [Target] TokenStore<IdentityConfig> store
             )
             {
                 var cancellationToken = new CancellationToken();
@@ -62,7 +62,7 @@ namespace Brighid.Identity.Client
                 Token token,
                 [Frozen, Substitute] IdentityServerClient client,
                 [Frozen, Substitute] IdentityConfig clientCredentials,
-                [Target] TokenStore store
+                [Target] TokenStore<IdentityConfig> store
             )
             {
                 token.ExpiresIn = 0;
@@ -81,7 +81,7 @@ namespace Brighid.Identity.Client
             public async Task ShouldThrowOperationCanceledExceptionIfExchangeFails(
                 [Frozen, Substitute] IdentityServerClient client,
                 [Frozen, Substitute] IdentityConfig clientCredentials,
-                [Target] TokenStore store
+                [Target] TokenStore<IdentityConfig> store
             )
             {
                 var cancellationToken = new CancellationToken();
@@ -101,7 +101,7 @@ namespace Brighid.Identity.Client
                 Token token,
                 [Frozen, Substitute] IdentityServerClient client,
                 [Frozen, Substitute] IdentityConfig clientCredentials,
-                [Target] TokenStore store
+                [Target] TokenStore<IdentityConfig> store
             )
             {
                 client.ExchangeClientCredentialsForToken(Any<string>(), Any<string>(), Any<CancellationToken>()).Returns(token);
