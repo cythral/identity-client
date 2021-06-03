@@ -10,7 +10,7 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis" Version="3.9.0" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.9.0" />
-        <PackageReference Include="NSwag.CodeGeneration.CSharp" Version="13.11.1" />
+        <PackageReference Include="NSwag.CodeGeneration.CSharp" Version="13.11.2" />
     </ItemGroup>
 
     <ItemGroup>
@@ -19,10 +19,7 @@
 
     <Target Name="GetDependencyTargetPaths" DependsOnTargets="CopyFilesToOutputDirectory">
         <ItemGroup>
-            <TargetPathWithTargetPlatformMoniker
-                Include="$(OutputPath)*.dll"
-                Exclude="$(OutputPath)ClientGenerator.dll"
-                IncludeRuntimeDependency="false" />
+            <TargetPathWithTargetPlatformMoniker Include="$(OutputPath)*.dll" Exclude="$(OutputPath)ClientGenerator.dll" IncludeRuntimeDependency="false" />
         </ItemGroup>
     </Target>
 </Project>
