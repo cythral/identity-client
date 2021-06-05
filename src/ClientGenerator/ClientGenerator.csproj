@@ -10,7 +10,7 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis" Version="3.9.0" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.9.0" />
-        <PackageReference Include="NSwag.CodeGeneration.CSharp" Version="13.11.2" />
+        <PackageReference Include="NSwag.CodeGeneration.CSharp" Version="13.11.3" />
     </ItemGroup>
 
     <ItemGroup>
