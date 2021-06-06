@@ -23,6 +23,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             var config = services.BuildServiceProvider().GetRequiredService<IConfiguration>();
             services.TryAddSingleton<ITokenStore, TokenStore<TConfig>>();
+            services.TryAddSingleton<IUserTokenStore, UserTokenStore>();
             services.TryAddScoped<IdentityServerClient>();
             services.TryAddTransient<DelegatingHandler, ClientCredentialsHandler<TConfig>>();
 

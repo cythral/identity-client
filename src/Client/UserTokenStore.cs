@@ -1,62 +1,50 @@
 using System;
+using System.Collections.Concurrent;
 using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 
-using Microsoft.Extensions.Options;
-
 namespace Brighid.Identity.Client
 {
     /// <inheritdoc />
-    public class TokenStore<TConfig> : ITokenStore, IDisposable
-        where TConfig : IdentityConfig
+    public class UserTokenStore : IUserTokenStore, IDisposable
     {
-        private readonly IdentityServerClient client;
-        private readonly IdentityConfig options;
+        private readonly ITokenStore tokenStore;
+        private readonly IdentityServerClient identityServerClient;
         private CancellationTokenSource? cancellationTokenSource = new();
         private readonly CancellationToken cancellationToken;
         private readonly Channel<TokenRequest> requestChannel = Channel.CreateUnbounded<TokenRequest>();
-        private readonly Channel<string?> responseChannel = Channel.CreateUnbounded<string?>();
-        private Token? Token { get; set; }
+        private readonly ConcurrentDictionary<string, Token> userTokenCache = new();
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="TokenStore{TConfig}" /> class.
-        /// </summary>
-        /// <param name="client">Client used to exchange client credentials for tokens with.</param>
-        /// <param name="options">Options containing client credentials.</param>
-        public TokenStore(
-            IdentityServerClient client,
-            IOptions<TConfig> options
+        public UserTokenStore(
+            ITokenStore tokenStore,
+            IdentityServerClient identityServerClient
         )
         {
-            this.client = client;
-            this.options = options.Value;
+            this.tokenStore = tokenStore;
+            this.identityServerClient = identityServerClient;
             cancellationToken = cancellationTokenSource.Token;
             Run();
         }
 
         /// <inheritdoc />
-        public async Task<string> GetToken(CancellationToken cancellationToken = default)
+        public async Task<string> GetUserToken(string userId, string audience, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var request = new TokenRequest
             {
+                UserId = userId,
+                Audience = audience,
                 Promise = new TaskCompletionSource<string>(),
-                CancellationToken = cancellationToken,
+                CancellationToken = cancellationToken
             };
 
             await requestChannel.Writer.WriteAsync(request, cancellationToken);
             return await request.Promise.Task;
         }
 
-        /// <inheritdoc />
-        public void InvalidateToken()
-        {
-            Token = null;
-        }
-
         /// <summary>
-        /// No more than one task should exchange a token at a time, so GetToken puts a request in a queue, which
+        /// No more than one task should exchange a token at a time, so GetUserToken puts a request in a queue, which
         /// Run picks up and responds to.
         /// </summary>
         public async void Run()
@@ -75,13 +63,16 @@ namespace Brighid.Identity.Client
 
                 try
                 {
-                    if (Token == null || Token.HasExpired)
+                    var tokenKey = $"{request.UserId}:{request.Audience}";
+                    if (!userTokenCache.TryGetValue(tokenKey, out var result) || result.HasExpired)
                     {
-                        Token = await client.ExchangeClientCredentialsForToken(options.ClientId, options.ClientSecret, linkedCancellationToken);
+                        var accessToken = await tokenStore.GetToken(linkedCancellationToken);
+                        result = await identityServerClient.ExchangeAccessTokenForImpersonateToken(accessToken, request.UserId!, request.Audience!, linkedCancellationToken);
+                        userTokenCache[tokenKey] = result;
                     }
 
                     // TODO: Verify ID Token
-                    request.Promise.SetResult(Token.AccessToken);
+                    request.Promise.SetResult(result.AccessToken);
                 }
                 catch (Exception e)
                 {
@@ -90,6 +81,7 @@ namespace Brighid.Identity.Client
             }
         }
 
+        /// <inheritdoc />
         public void Dispose()
         {
             cancellationTokenSource?.Cancel();

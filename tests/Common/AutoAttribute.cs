@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Text.Json;
+using System.Threading;
 
 using AutoFixture;
 using AutoFixture.AutoNSubstitute;
@@ -13,6 +14,7 @@ internal class AutoAttribute : AutoDataAttribute
     {
         var fixture = new Fixture();
 
+        fixture.Inject(new CancellationToken(false));
         fixture.Customize(new AutoNSubstituteCustomization { ConfigureMembers = true });
         fixture.Customizations.Add(new TypeOmitter<JsonElement>());
         fixture.Customizations.Insert(-1, new TargetRelay());

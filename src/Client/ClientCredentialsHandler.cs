@@ -1,6 +1,8 @@
-﻿using System.Net;
+﻿using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,14 +14,17 @@ namespace Brighid.Identity.Client
         where TConfig : IdentityConfig
     {
         private readonly ITokenStore tokenStore;
+        private readonly IUserTokenStore userTokenStore;
         private readonly TConfig config;
 
         public ClientCredentialsHandler(
             ITokenStore tokenStore,
+            IUserTokenStore userTokenStore,
             IOptions<TConfig> config
         )
         {
             this.tokenStore = tokenStore;
+            this.userTokenStore = userTokenStore;
             this.config = config.Value;
         }
 
@@ -37,7 +42,7 @@ namespace Brighid.Identity.Client
                 throw new TokenRefreshException();
             }
 
-            var token = await tokenStore.GetToken(cancellationToken);
+            var token = await GetTokenForRequest(requestMessage, cancellationToken);
             requestMessage.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
             var response = await base.SendAsync(requestMessage, cancellationToken).ConfigureAwait(false);
@@ -48,6 +53,21 @@ namespace Brighid.Identity.Client
             }
 
             return response;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private async Task<string> GetTokenForRequest(HttpRequestMessage requestMessage, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            if (requestMessage.Headers.TryGetValues("x-impersonate-userId", out var userIdHeaderValues) &&
+                requestMessage.Headers.TryGetValues("x-impersonate-audience", out var audienceHeaderValues))
+            {
+                var userId = userIdHeaderValues.First();
+                var audience = audienceHeaderValues.First();
+                return await userTokenStore.GetUserToken(userId, audience, cancellationToken);
+            }
+
+            return await tokenStore.GetToken(cancellationToken);
         }
     }
 }
