@@ -8,10 +8,11 @@ using NUnit.Framework;
 namespace Brighid.Identity.Client
 {
 #pragma warning disable IDE0055, IDE0017
-    [Category("Integration")]
+    
     public class GeneratedClientTests
     {
         [TestFixture]
+        [Category("Integration")]
         public class SetToken
         {
             [Test, Auto]

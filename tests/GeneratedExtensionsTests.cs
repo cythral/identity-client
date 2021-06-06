@@ -11,10 +11,10 @@ using NUnit.Framework;
 namespace Brighid.Identity.Client
 {
 #pragma warning disable IDE0055
-    [Category("Integration")]
     public class GeneratedExtensionsTests
     {
         [TestFixture]
+        [Category("Integration")]
         public class UseBrighidIdentityApplications
         {
             [Test, Auto]

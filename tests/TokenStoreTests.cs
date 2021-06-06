@@ -19,7 +19,8 @@ namespace Brighid.Identity.Client
     public class TokenStoreTests
     {
         [TestFixture]
-        public class GetIdToken
+        [Category("Unit")]
+        public class GetTokenTests
         {
             [Test, Auto]
             public async Task ShouldFetchTokenIfItsNotInTheCache(
@@ -78,22 +79,25 @@ namespace Brighid.Identity.Client
             }
 
             [Test, Auto, Timeout(1000)]
-            public async Task ShouldThrowOperationCanceledExceptionIfExchangeFails(
+            public async Task ShouldThrowPropagateExceptionIfExchangeFails(
+                string message,
                 [Frozen, Substitute] IdentityServerClient client,
                 [Frozen, Substitute] IdentityConfig clientCredentials,
                 [Target] TokenStore<IdentityConfig> store
             )
             {
                 var cancellationToken = new CancellationToken();
-                client.ExchangeClientCredentialsForToken(Any<string>(), Any<string>(), Any<CancellationToken>()).Returns<Token>(x => throw new Exception());
+                var exception = new Exception(message);
+                client.ExchangeClientCredentialsForToken(Any<string>(), Any<string>(), Any<CancellationToken>()).Returns<Token>(x => throw exception);
                 Func<Task> func = () => store.GetToken(cancellationToken);
 
-                await func.Should().ThrowAsync<OperationCanceledException>();
+                (await func.Should().ThrowAsync<Exception>()).And.Message.Should().Be(message);
                 await client.Received().ExchangeClientCredentialsForToken(Is(clientCredentials.ClientId), Is(clientCredentials.ClientSecret), Any<CancellationToken>());
             }
         }
 
         [TestFixture]
+        [Category("Unit")]
         public class InvalidateTokenTests
         {
             [Test, Auto]

@@ -52,7 +52,7 @@ namespace Brighid.Identity.Client
         }
 
         [Test, Auto]
-        public async Task SendAsync_AttachesIdentityToken_ToRequests(
+        public async Task SendAsync_AttachesAccessToken_ToRequests(
             string response,
             Uri uri,
             string token,
@@ -76,6 +76,38 @@ namespace Brighid.Identity.Client
             await invoker.SendAsync(requestMessage, cancellationToken);
 
             await tokenStore.Received().GetToken(Is(cancellationToken));
+            mockHttp.VerifyNoOutstandingExpectation();
+        }
+
+        [Test, Auto]
+        public async Task SendAsync_AttachesImpersonateToken_ToRequestsWithImpersonateHeader(
+            string response,
+            Uri uri,
+            string token,
+            string userId,
+            string audience,
+            HttpRequestMessage requestMessage,
+            [NotNull, Substitute, Frozen] IUserTokenStore tokenStore,
+            [NotNull, Target] ClientCredentialsHandler<IdentityConfig> handler
+        )
+        {
+            var cancellationToken = new CancellationToken(false);
+            using var mockHttp = new MockHttpMessageHandler();
+            handler.InnerHandler = mockHttp;
+            mockHttp
+            .Expect(uri.ToString())
+            .WithHeaders("Authorization", $"Bearer {token}")
+            .Respond("text/plain", response);
+
+            using var invoker = new HttpMessageInvoker(handler);
+            tokenStore.GetUserToken(Any<string>(), Any<string>(), Any<CancellationToken>()).Returns(token);
+
+            requestMessage.RequestUri = uri;
+            requestMessage.Headers.Add("x-impersonate-userId", userId);
+            requestMessage.Headers.Add("x-impersonate-audience", audience);
+            await invoker.SendAsync(requestMessage, cancellationToken);
+
+            await tokenStore.Received().GetUserToken(Is(userId), Is(audience), Is(cancellationToken));
             mockHttp.VerifyNoOutstandingExpectation();
         }
 
