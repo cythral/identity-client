@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net.Http;
 
 using Brighid.Identity.Client;
@@ -24,7 +25,6 @@ namespace Microsoft.Extensions.DependencyInjection
             var config = services.BuildServiceProvider().GetRequiredService<IConfiguration>();
             services.TryAddSingleton<ITokenStore, TokenStore<TConfig>>();
             services.TryAddSingleton<IUserTokenStore, UserTokenStore>();
-            services.TryAddScoped<IdentityServerClient>();
             services.TryAddTransient<DelegatingHandler, ClientCredentialsHandler<TConfig>>();
 
             var identityServerUri = configuration.GetValue("IdentityServerUri", new Uri(DefaultIdentityServerUri));
@@ -35,6 +35,8 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 ConfigurePrimaryHandler(builder);
             });
+
+            services.ChangeFactoryDescriptorToSingleton<IdentityServerClient>();
         }
 
         public static void UseBrighidIdentity<TServiceType, TImplementation>(this IServiceCollection services, Uri? baseAddress = null)
@@ -48,6 +50,8 @@ namespace Microsoft.Extensions.DependencyInjection
                 ConfigurePrimaryHandler(builder);
                 ConfigureAdditionalHandlers(builder);
             });
+
+            services.ChangeFactoryDescriptorToSingleton<TServiceType>();
         }
 
         private static void ConfigurePrimaryHandler(Http.HttpMessageHandlerBuilder builder)
@@ -75,6 +79,16 @@ namespace Microsoft.Extensions.DependencyInjection
             var config = provider.GetRequiredService<IOptions<IdentityConfig>>().Value;
             var rawUrl = config.IdentityServerUri.ToString();
             return new Uri($"{rawUrl.TrimEnd('/')}/api");
+        }
+
+        private static void ChangeFactoryDescriptorToSingleton<TServiceType>(this IServiceCollection services)
+        {
+            var oldDescriptor = (from service in services where service.ServiceType == typeof(TServiceType) select service).First();
+            Console.WriteLine(oldDescriptor);
+            var newDescriptor = new ServiceDescriptor(oldDescriptor.ServiceType, oldDescriptor.ImplementationFactory!, ServiceLifetime.Singleton);
+
+            services.Remove(oldDescriptor);
+            services.Add(newDescriptor);
         }
     }
 }
