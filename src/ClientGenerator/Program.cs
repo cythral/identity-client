@@ -135,8 +135,6 @@ namespace Brighid.Identity.ClientGenerator
         public static IEnumerable<StatementSyntax> GenerateUseMethodBody(string interfaceName, string implementationName)
         {
             yield return ParseStatement("var baseUri = GetIdentityServerApiBaseUri(services);");
-            yield return ParseStatement($"services.TryAddSingleton<{interfaceName}, {implementationName}>();");
-            yield return ParseStatement($"services.TryAddSingleton<{interfaceName}Factory, {implementationName}Factory>();");
             yield return ParseStatement($"services.UseBrighidIdentity<{interfaceName}, {implementationName}>(baseUri);");
             yield return ParseStatement($"services.UseBrighidIdentity<{interfaceName}Factory, {implementationName}Factory>(baseUri);");
         }
