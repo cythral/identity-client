@@ -30,7 +30,12 @@ namespace Microsoft.Extensions.DependencyInjection
             var identityServerUri = configuration.GetValue("IdentityServerUri", new Uri(DefaultIdentityServerUri));
 
             services
-            .AddHttpClient<IdentityServerClient>(options => options.BaseAddress = identityServerUri)
+            .AddHttpClient<IdentityServerClient>(options =>
+            {
+                options.BaseAddress = identityServerUri;
+                options.DefaultRequestVersion = new Version(2, 0);
+                options.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionExact;
+            })
             .ConfigureHttpMessageHandlerBuilder(builder =>
             {
                 ConfigurePrimaryHandler(builder);
@@ -43,8 +48,27 @@ namespace Microsoft.Extensions.DependencyInjection
             where TServiceType : class
             where TImplementation : class, TServiceType
         {
+            services.UseBrighidIdentity<TServiceType, TImplementation>(options => options.BaseAddress = baseAddress);
+        }
+
+        public static void UseBrighidIdentityWithHttp2<TServiceType, TImplementation>(this IServiceCollection services, Uri? baseAddress = null)
+            where TServiceType : class
+            where TImplementation : class, TServiceType
+        {
+            services.UseBrighidIdentity<TServiceType, TImplementation>(options =>
+            {
+                options.BaseAddress = baseAddress;
+                options.DefaultRequestVersion = new Version(2, 0);
+                options.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionExact;
+            });
+        }
+
+        public static void UseBrighidIdentity<TServiceType, TImplementation>(this IServiceCollection services, Action<HttpClient> configureClient)
+            where TServiceType : class
+            where TImplementation : class, TServiceType
+        {
             services
-            .AddHttpClient<TServiceType, TImplementation>(typeof(TImplementation).FullName, options => options.BaseAddress = baseAddress)
+            .AddHttpClient<TServiceType, TImplementation>(typeof(TImplementation).FullName, configureClient)
             .ConfigureHttpMessageHandlerBuilder(builder =>
             {
                 ConfigurePrimaryHandler(builder);
@@ -84,7 +108,6 @@ namespace Microsoft.Extensions.DependencyInjection
         private static void ChangeFactoryDescriptorToSingleton<TServiceType>(this IServiceCollection services)
         {
             var oldDescriptor = (from service in services where service.ServiceType == typeof(TServiceType) select service).First();
-            Console.WriteLine(oldDescriptor);
             var newDescriptor = new ServiceDescriptor(oldDescriptor.ServiceType, oldDescriptor.ImplementationFactory!, ServiceLifetime.Singleton);
 
             services.Remove(oldDescriptor);
