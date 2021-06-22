@@ -26,6 +26,7 @@ namespace Brighid.Identity.ClientGenerator
         private readonly string[] usings = new[]
         {
             "System",
+            "System.Net.Http",
             "Microsoft.Extensions.DependencyInjection",
             "Microsoft.Extensions.DependencyInjection.Extensions",
             "Brighid.Identity.Client",
@@ -135,8 +136,8 @@ namespace Brighid.Identity.ClientGenerator
         public static IEnumerable<StatementSyntax> GenerateUseMethodBody(string interfaceName, string implementationName)
         {
             yield return ParseStatement("var baseUri = GetIdentityServerApiBaseUri(services);");
-            yield return ParseStatement($"services.UseBrighidIdentity<{interfaceName}, {implementationName}>(baseUri);");
-            yield return ParseStatement($"services.UseBrighidIdentity<{interfaceName}Factory, {implementationName}Factory>(baseUri);");
+            yield return ParseStatement($"services.UseBrighidIdentityWithHttp2<{interfaceName}, {implementationName}>(baseUri);");
+            yield return ParseStatement($"services.UseBrighidIdentityWithHttp2<{interfaceName}Factory, {implementationName}Factory>(baseUri);");
         }
     }
 }
