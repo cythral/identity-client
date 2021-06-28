@@ -16,5 +16,16 @@ namespace Brighid.Identity.Client
         /// <param name="cancellationToken">Token used to cancel the operation.</param>
         /// <returns>The resulting impersonation token.</returns>
         Task<string> GetUserToken(string userId, string audience, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Invalidates all user tokens stored in the cache.
+        /// </summary>
+        void InvalidateAllUserTokens();
+
+        /// <summary>
+        /// Invalidate all tokens for the given <paramref name="userId" />.
+        /// </summary>
+        /// <param name="userId">The userId to invalidate a user token for.</param>
+        void InvalidateTokensForUser(string userId);
     }
 }

@@ -43,6 +43,25 @@ namespace Brighid.Identity.Client
             return await request.Promise.Task;
         }
 
+        /// <inheritdoc />
+        public void InvalidateAllUserTokens()
+        {
+            userTokenCache.Clear();
+        }
+
+        /// <inheritdoc />
+        public void InvalidateTokensForUser(string userId)
+        {
+            var keyToSearchFor = $"{userId}:";
+            foreach (var key in userTokenCache.Keys)
+            {
+                if (key.StartsWith(keyToSearchFor))
+                {
+                    userTokenCache.TryRemove(key, out _);
+                }
+            }
+        }
+
         /// <summary>
         /// No more than one task should exchange a token at a time, so GetUserToken puts a request in a queue, which
         /// Run picks up and responds to.
@@ -67,7 +86,13 @@ namespace Brighid.Identity.Client
                     if (!userTokenCache.TryGetValue(tokenKey, out var result) || result.HasExpired)
                     {
                         var accessToken = await tokenStore.GetToken(linkedCancellationToken);
-                        result = await identityServerClient.ExchangeAccessTokenForImpersonateToken(accessToken, request.UserId!, request.Audience!, linkedCancellationToken);
+                        result = await identityServerClient.ExchangeAccessTokenForImpersonateToken(
+                            accessToken,
+                            request.UserId!,
+                            request.Audience!,
+                            linkedCancellationToken
+                        );
+
                         userTokenCache[tokenKey] = result;
                     }
 
