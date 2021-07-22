@@ -24,11 +24,11 @@
       },
       "AWSSDK.KeyManagementService": {
         "type": "Direct",
-        "requested": "[3.7.1.6, )",
-        "resolved": "3.7.1.6",
-        "contentHash": "tdHX3GaUDX1NWKQYr1ooNtBfxHVEg4mvt50lLalKmgReB+0OM54Nl2rR4E+qSrc405zG68MfhGVnmNmoL2oT/w==",
+        "requested": "[3.7.1.13, )",
+        "resolved": "3.7.1.13",
+        "contentHash": "tbhzXcffZTlkpqafUYbFT6o7sJjQ7IXHVo0mt17fQmhiez9nf4CSFHoLqm4jtoeUsPfYqO/qN6q80gqp2Jl/pw==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.0.39, 4.0.0)"
+          "AWSSDK.Core": "[3.7.1, 4.0.0)"
         }
       },
       "FluentAssertions": {
@@ -114,8 +114,8 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.0.39",
-        "contentHash": "G8+hyyov3ju/4M9SdwaZhGEdYhUdp+KptrKXy9Jmjzj44MZ+wqbmxbTYc5szOTXbmx5N/b+IJM18dUUciDEnkw=="
+        "resolved": "3.7.1",
+        "contentHash": "VWnzRxzrMedMJr6Xkl1/HFzgYfRuT3rkUGhp4rqOkXgutaMoNk8HV+6TfjmAhz99CmTV23RxSMUwGwPfIrxy5w=="
       },
       "Castle.Core": {
         "type": "Transitive",
@@ -202,8 +202,8 @@
       },
       "Microsoft.Extensions.DependencyInjection": {
         "type": "Transitive",
-        "resolved": "5.0.1",
-        "contentHash": "//mDNrYeiJ0eh/awFhDFJQzkRVra/njU5Y4fyK7X29g5HScrzbUkKOKlyTtygthcGFt4zNC8G5CFCjb/oizomA==",
+        "resolved": "5.0.2",
+        "contentHash": "xzFW00AZEvOXM1OX+0+AYH5op/Hf3u//e6wszBd/rK72sypD+jx5CtsHxM4BVuFBEs8SajfO4QzSJtrQaHDr4A==",
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "5.0.0"
         }
@@ -884,7 +884,7 @@
         "type": "Project",
         "dependencies": {
           "Microsoft.Extensions.Configuration": "5.0.0",
-          "Microsoft.Extensions.DependencyInjection": "5.0.1",
+          "Microsoft.Extensions.DependencyInjection": "5.0.2",
           "Microsoft.Extensions.Http": "5.0.0",
           "Microsoft.Extensions.Options": "5.0.0",
           "Microsoft.Extensions.Options.ConfigurationExtensions": "5.0.0"
