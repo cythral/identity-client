@@ -87,6 +87,29 @@ namespace Brighid.Identity.Client
             }
 
             [Test, Auto]
+            public async Task ShouldSendRequestWithGivenAudience(
+                Uri baseAddress,
+                string clientId,
+                string clientSecret,
+                string audience,
+                Token response
+            )
+            {
+                using var handler = new MockHttpMessageHandler();
+                using var httpClient = new HttpClient(handler) { BaseAddress = baseAddress };
+                var client = new IdentityServerClient(httpClient);
+
+                handler
+                .Expect(HttpMethod.Post, $"{baseAddress}oauth2/token")
+                .WithFormData("audience", audience)
+                .Respond("application/json", Serialize(response));
+
+                await client.ExchangeClientCredentialsForToken(clientId, clientSecret, audience);
+
+                handler.VerifyNoOutstandingExpectation();
+            }
+
+            [Test, Auto]
             public async Task ShouldReturnToken(
                 Uri baseAddress,
                 string clientId,

@@ -58,7 +58,8 @@ namespace Brighid.Identity.Client
             Uri baseServiceAddress,
             string accessToken,
             string clientId,
-            string clientSecret
+            string clientSecret,
+            string audience
         )
         {
             var serviceCollection = new ServiceCollection();
@@ -68,6 +69,7 @@ namespace Brighid.Identity.Client
                 ["Identity:IdentityServerUri"] = baseIdpAddress.ToString(),
                 ["Identity:ClientId"] = clientId,
                 ["Identity:ClientSecret"] = clientSecret,
+                ["Identity:Audience"] = audience,
             }).Build();
 
             var mockHandler = new MockHttpMessageHandler();
@@ -76,6 +78,7 @@ namespace Brighid.Identity.Client
             .WithFormData("client_id", clientId)
             .WithFormData("client_secret", clientSecret)
             .WithFormData("grant_type", "client_credentials")
+            .WithFormData("audience", audience)
             .Respond("application/json", $@"{{""access_token"":""{accessToken}""}}");
 
             mockHandler
