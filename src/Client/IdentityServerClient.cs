@@ -19,17 +19,24 @@ namespace Brighid.Identity.Client
 
         public Uri? BaseAddress { get => httpClient.BaseAddress; set => httpClient.BaseAddress = value; }
 
-        public virtual async Task<Token> ExchangeClientCredentialsForToken(string clientId, string clientSecret, CancellationToken cancellationToken = default)
+        public virtual async Task<Token> ExchangeClientCredentialsForToken(string clientId, string clientSecret, string? audience = null, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var formData = (IEnumerable<KeyValuePair<string?, string?>>)new Dictionary<string, string?>
+            var formData = new Dictionary<string, string?>
             {
                 ["client_id"] = clientId,
                 ["client_secret"] = clientSecret,
                 ["grant_type"] = IdentityClientConstants.GrantTypes.ClientCredentials,
             };
 
-            return await MakeTokenExchange(formData, cancellationToken);
+            if (audience != null)
+            {
+                formData["audience"] = audience;
+            }
+
+#pragma warning disable IDE0004 // Cast is necessary
+            return await MakeTokenExchange((IEnumerable<KeyValuePair<string?, string?>>)formData, cancellationToken);
+#pragma warning restore IDE0004
         }
 
         public virtual async Task<Token> ExchangeAccessTokenForImpersonateToken(string accessToken, string userId, string audience, CancellationToken cancellationToken = default)

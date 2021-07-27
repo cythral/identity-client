@@ -77,7 +77,7 @@ namespace Brighid.Identity.Client
                 {
                     if (Token == null || Token.HasExpired)
                     {
-                        Token = await client.ExchangeClientCredentialsForToken(options.ClientId, options.ClientSecret, linkedCancellationToken);
+                        Token = await client.ExchangeClientCredentialsForToken(options.ClientId, options.ClientSecret, options.Audience, linkedCancellationToken);
                     }
 
                     // TODO: Verify ID Token

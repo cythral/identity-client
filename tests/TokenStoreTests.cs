@@ -31,12 +31,12 @@ namespace Brighid.Identity.Client
             )
             {
                 var cancellationToken = new CancellationToken();
-                client.ExchangeClientCredentialsForToken(Any<string>(), Any<string>(), Any<CancellationToken>()).Returns(token);
+                client.ExchangeClientCredentialsForToken(Any<string>(), Any<string>(), Any<string>(), Any<CancellationToken>()).Returns(token);
 
                 var result = await store.GetToken(cancellationToken);
 
                 result.Should().Be(token.AccessToken);
-                await client.Received().ExchangeClientCredentialsForToken(Is(clientCredentials.ClientId), Is(clientCredentials.ClientSecret), Any<CancellationToken>());
+                await client.Received().ExchangeClientCredentialsForToken(Is(clientCredentials.ClientId), Is(clientCredentials.ClientSecret), Is(clientCredentials.Audience), Any<CancellationToken>());
             }
 
             [Test, Auto]
@@ -48,14 +48,14 @@ namespace Brighid.Identity.Client
             )
             {
                 var cancellationToken = new CancellationToken();
-                client.ExchangeClientCredentialsForToken(Any<string>(), Any<string>(), Any<CancellationToken>()).Returns(token);
+                client.ExchangeClientCredentialsForToken(Any<string>(), Any<string>(), Any<string>(), Any<CancellationToken>()).Returns(token);
 
                 await store.GetToken(cancellationToken);
                 client.ClearReceivedCalls();
 
                 var result = await store.GetToken(cancellationToken);
                 result.Should().Be(token.AccessToken);
-                await client.DidNotReceive().ExchangeClientCredentialsForToken(Is(clientCredentials.ClientId), Is(clientCredentials.ClientSecret), Any<CancellationToken>());
+                await client.DidNotReceive().ExchangeClientCredentialsForToken(Is(clientCredentials.ClientId), Is(clientCredentials.ClientSecret), Is(clientCredentials.Audience), Any<CancellationToken>());
             }
 
             [Test, Auto]
@@ -68,14 +68,14 @@ namespace Brighid.Identity.Client
             {
                 token.ExpiresIn = 0;
                 var cancellationToken = new CancellationToken();
-                client.ExchangeClientCredentialsForToken(Any<string>(), Any<string>(), Any<CancellationToken>()).Returns(token);
+                client.ExchangeClientCredentialsForToken(Any<string>(), Any<string>(), Any<string>(), Any<CancellationToken>()).Returns(token);
 
                 await store.GetToken(cancellationToken);
                 client.ClearReceivedCalls();
 
                 var result = await store.GetToken(cancellationToken);
                 result.Should().Be(token.AccessToken);
-                await client.Received().ExchangeClientCredentialsForToken(Is(clientCredentials.ClientId), Is(clientCredentials.ClientSecret), Any<CancellationToken>());
+                await client.Received().ExchangeClientCredentialsForToken(Is(clientCredentials.ClientId), Is(clientCredentials.ClientSecret), Is(clientCredentials.Audience), Any<CancellationToken>());
             }
 
             [Test, Auto, Timeout(1000)]
@@ -88,11 +88,11 @@ namespace Brighid.Identity.Client
             {
                 var cancellationToken = new CancellationToken();
                 var exception = new Exception(message);
-                client.ExchangeClientCredentialsForToken(Any<string>(), Any<string>(), Any<CancellationToken>()).Returns<Token>(x => throw exception);
+                client.ExchangeClientCredentialsForToken(Any<string>(), Any<string>(), Any<string>(), Any<CancellationToken>()).Returns<Token>(x => throw exception);
                 Func<Task> func = () => store.GetToken(cancellationToken);
 
                 (await func.Should().ThrowAsync<Exception>()).And.Message.Should().Be(message);
-                await client.Received().ExchangeClientCredentialsForToken(Is(clientCredentials.ClientId), Is(clientCredentials.ClientSecret), Any<CancellationToken>());
+                await client.Received().ExchangeClientCredentialsForToken(Is(clientCredentials.ClientId), Is(clientCredentials.ClientSecret), Is(clientCredentials.Audience), Any<CancellationToken>());
             }
         }
 
@@ -108,17 +108,17 @@ namespace Brighid.Identity.Client
                 [Target] TokenStore<IdentityConfig> store
             )
             {
-                client.ExchangeClientCredentialsForToken(Any<string>(), Any<string>(), Any<CancellationToken>()).Returns(token);
+                client.ExchangeClientCredentialsForToken(Any<string>(), Any<string>(), Any<string>(), Any<CancellationToken>()).Returns(token);
 
                 var cancellationToken = new CancellationToken();
                 await store.GetToken(cancellationToken);
 
-                await client.Received().ExchangeClientCredentialsForToken(Is(clientCredentials.ClientId), Is(clientCredentials.ClientSecret), Any<CancellationToken>());
+                await client.Received().ExchangeClientCredentialsForToken(Is(clientCredentials.ClientId), Is(clientCredentials.ClientSecret), Is(clientCredentials.Audience), Any<CancellationToken>());
                 client.ClearReceivedCalls();
 
                 store.InvalidateToken();
                 await store.GetToken(cancellationToken);
-                await client.Received().ExchangeClientCredentialsForToken(Is(clientCredentials.ClientId), Is(clientCredentials.ClientSecret), Any<CancellationToken>());
+                await client.Received().ExchangeClientCredentialsForToken(Is(clientCredentials.ClientId), Is(clientCredentials.ClientSecret), Is(clientCredentials.Audience), Any<CancellationToken>());
             }
         }
     }
