@@ -12,12 +12,6 @@
           "Microsoft.CodeAnalysis.VisualBasic.Workspaces": "[3.10.0]"
         }
       },
-      "Microsoft.CodeAnalysis.CSharp.CodeStyle": {
-        "type": "Direct",
-        "requested": "[3.10.0, )",
-        "resolved": "3.10.0",
-        "contentHash": "jnPs5tldUmQqKoWUCwdm0ZXhdgE5b5HHQF1Q1anHIdZqHLZ05mKRN7IgaMOiyo73OM+pHFPLJDudM5LXuu15TA=="
-      },
       "Microsoft.CodeAnalysis.CSharp.Workspaces": {
         "type": "Direct",
         "requested": "[3.10.0, )",
