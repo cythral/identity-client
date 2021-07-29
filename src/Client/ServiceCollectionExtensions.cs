@@ -7,15 +7,14 @@ using Brighid.Identity.Client.Stores;
 using Brighid.Identity.Client.Utils;
 
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
     public static partial class ServiceCollectionExtensions
     {
+        [Obsolete("Use ConfigureBrighidIdentity<TConfig> instead, and supply a TConfig with an encrypted client secret.", false)]
         public static void ConfigureBrighidIdentity(this IServiceCollection services, IConfiguration configuration)
         {
-            services.Configure<IdentityConfig>(configuration);
             services.ConfigureBrighidIdentity<IdentityConfig>(configuration);
         }
 
@@ -28,7 +27,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static void ConfigureBrighidIdentity<TConfig>(this IServiceCollection services, IConfiguration configuration, HttpMessageHandler messageHandler)
             where TConfig : IdentityConfig
         {
-            var identityConfig = configuration.Get<TConfig>() ?? throw new Exception("Could not retrieve Brighid Identity configuration. ");
+            var identityConfig = configuration.Get<TConfig>() ?? throw new Exception("Could not retrieve Brighid Identity configuration.");
             var identityServerUri = identityConfig.IdentityServerUri ?? new Uri(IdentityClientConstants.DefaultIdentityServerUri);
             var identityOptions = Options.Options.Create(identityConfig!);
             var httpClient = new HttpClient(messageHandler)
@@ -42,8 +41,11 @@ namespace Microsoft.Extensions.DependencyInjection
             var tokenStore = new TokenStore<TConfig>(identityServerClient, identityOptions);
             var userTokenStore = new UserTokenStore(tokenStore, identityServerClient);
             var cacheUtils = new DefaultCacheUtils(tokenStore, userTokenStore);
+            var metadataProvider = new DefaultMetadataProvider(identityConfig);
 
+            services.AddSingleton<IMetadataProvider>(metadataProvider);
             services.AddSingleton<ICacheUtils>(cacheUtils);
+            services.AddSingleton(identityOptions);
             services.AddSingleton(messageHandler);
             services.AddTransient<DelegatingHandler>(sp => new ClientCredentialsHandler<TConfig>(tokenStore, userTokenStore, identityOptions));
         }
@@ -88,6 +90,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
                 var httpClient = new HttpClient(delegatingHandlers[0], false);
                 configureClient(httpClient);
+
                 return (TServiceType)activator(serviceProvider, new[] { httpClient });
             });
         }
@@ -95,19 +98,9 @@ namespace Microsoft.Extensions.DependencyInjection
 #pragma warning disable IDE0051 // Used by Generators
         private static Uri GetIdentityServerApiBaseUri(IServiceCollection services)
         {
-            var provider = services.BuildServiceProvider();
-            var config = provider.GetRequiredService<IOptions<IdentityConfig>>().Value;
-            var rawUrl = config.IdentityServerUri.ToString();
+            var metadataProvider = (from service in services where service.ServiceType == typeof(IMetadataProvider) select (IMetadataProvider)service.ImplementationInstance!).First();
+            var rawUrl = metadataProvider.IdentityServerUri.ToString();
             return new Uri($"{rawUrl.TrimEnd('/')}/api");
-        }
-
-        private static void ChangeFactoryDescriptorToSingleton<TServiceType>(this IServiceCollection services)
-        {
-            var oldDescriptor = (from service in services where service.ServiceType == typeof(TServiceType) select service).First();
-            var newDescriptor = new ServiceDescriptor(oldDescriptor.ServiceType, oldDescriptor.ImplementationFactory!, ServiceLifetime.Singleton);
-
-            services.Remove(oldDescriptor);
-            services.Add(newDescriptor);
         }
 #pragma warning restore IDE0051
     }

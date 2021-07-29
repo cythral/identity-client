@@ -9,6 +9,7 @@ using FluentAssertions;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 using NUnit.Framework;
 
@@ -82,6 +83,34 @@ namespace Brighid.Identity.Client
             var cacheUtils = provider.GetService<ICacheUtils>();
 
             cacheUtils.Should().NotBeNull();
+        }
+
+        [Test, Auto]
+        public void OptionsShouldBeInjected(
+            Uri baseIdpAddress,
+            Uri baseServiceAddress,
+            string clientId,
+            string clientSecret
+        )
+        {
+            var serviceCollection = new ServiceCollection();
+            var mockHandler = new MockHttpMessageHandler();
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                ["Identity:IdentityServerUri"] = baseIdpAddress.ToString(),
+                ["Identity:ClientId"] = clientId,
+                ["Identity:ClientSecret"] = clientSecret,
+            }).Build();
+
+            serviceCollection.AddSingleton<IConfiguration>(configuration);
+            serviceCollection.ConfigureBrighidIdentity<CustomIdentityConfig>(configuration.GetSection("Identity"), mockHandler);
+            serviceCollection.UseBrighidIdentity<ITestIdentityService, TestIdentityService>(baseServiceAddress);
+
+            var provider = serviceCollection.BuildServiceProvider();
+            var identityOptions = provider.GetService<IOptions<CustomIdentityConfig>>();
+
+            identityOptions.Should().NotBeNull();
         }
 
         [Test, Auto]
