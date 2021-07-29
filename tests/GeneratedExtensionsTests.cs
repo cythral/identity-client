@@ -35,7 +35,7 @@ namespace Brighid.Identity.Client
  
                 var services = new ServiceCollection();
                 services.AddSingleton<IConfiguration>(configuration);
-                services.ConfigureBrighidIdentity(configuration.GetSection("Identity"));
+                services.ConfigureBrighidIdentity<CustomIdentityConfig>(configuration.GetSection("Identity"));
 
                 services.UseBrighidIdentityApplications();
 
