@@ -13,10 +13,10 @@ using NUnit.Framework;
 
 using static NSubstitute.Arg;
 
-namespace Brighid.Identity.Client
+namespace Brighid.Identity.Client.Stores
 {
     [Category("Unit")]
-    public class TokenStoreTests
+    internal class TokenStoreTests
     {
         [TestFixture]
         [Category("Unit")]

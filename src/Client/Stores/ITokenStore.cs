@@ -1,12 +1,12 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Brighid.Identity.Client
+namespace Brighid.Identity.Client.Stores
 {
     /// <summary>
     /// Store for storing/retrieving bearer tokens.
     /// </summary>
-    public interface ITokenStore
+    internal interface ITokenStore
     {
         /// <summary>
         /// Retrieves the ID token from the store or the API if it's expired/not present.

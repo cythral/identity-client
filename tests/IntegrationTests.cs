@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 
+using Brighid.Identity.Client.Utils;
+
+using FluentAssertions;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -53,6 +57,34 @@ namespace Brighid.Identity.Client
     public class IntegrationTests
     {
         [Test, Auto]
+        public void CacheUtilsShouldBeInjected(
+            Uri baseIdpAddress,
+            Uri baseServiceAddress,
+            string clientId,
+            string clientSecret
+        )
+        {
+            var serviceCollection = new ServiceCollection();
+            var mockHandler = new MockHttpMessageHandler();
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                ["Identity:IdentityServerUri"] = baseIdpAddress.ToString(),
+                ["Identity:ClientId"] = clientId,
+                ["Identity:ClientSecret"] = clientSecret,
+            }).Build();
+
+            serviceCollection.AddSingleton<IConfiguration>(configuration);
+            serviceCollection.ConfigureBrighidIdentity<CustomIdentityConfig>(configuration.GetSection("Identity"), mockHandler);
+            serviceCollection.UseBrighidIdentity<ITestIdentityService, TestIdentityService>(baseServiceAddress);
+
+            var provider = serviceCollection.BuildServiceProvider();
+            var cacheUtils = provider.GetService<ICacheUtils>();
+
+            cacheUtils.Should().NotBeNull();
+        }
+
+        [Test, Auto]
         public async Task ClientCredentialsFlow(
             Uri baseIdpAddress,
             Uri baseServiceAddress,
@@ -86,9 +118,8 @@ namespace Brighid.Identity.Client
             .WithHeaders("authorization", $"Bearer {accessToken}")
             .Respond("application/text", "OK");
 
-            serviceCollection.AddSingleton<HttpMessageHandler>(mockHandler);
             serviceCollection.AddSingleton<IConfiguration>(configuration);
-            serviceCollection.ConfigureBrighidIdentity<CustomIdentityConfig>(configuration.GetSection("Identity"));
+            serviceCollection.ConfigureBrighidIdentity<CustomIdentityConfig>(configuration.GetSection("Identity"), mockHandler);
             serviceCollection.UseBrighidIdentity<ITestIdentityService, TestIdentityService>(baseServiceAddress);
             serviceCollection.Configure<CustomIdentityConfig>(configuration.GetSection("Identity"));
 
@@ -142,9 +173,8 @@ namespace Brighid.Identity.Client
             .WithHeaders("authorization", $"Bearer {impersonateToken}")
             .Respond("application/text", "OK");
 
-            serviceCollection.AddSingleton<HttpMessageHandler>(mockHandler);
             serviceCollection.AddSingleton<IConfiguration>(configuration);
-            serviceCollection.ConfigureBrighidIdentity<CustomIdentityConfig>(configuration.GetSection("Identity"));
+            serviceCollection.ConfigureBrighidIdentity<CustomIdentityConfig>(configuration.GetSection("Identity"), mockHandler);
             serviceCollection.UseBrighidIdentity<ITestIdentityService, TestIdentityService>(baseServiceAddress);
             serviceCollection.Configure<CustomIdentityConfig>(configuration.GetSection("Identity"));
 

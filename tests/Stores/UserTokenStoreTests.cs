@@ -14,9 +14,9 @@ using NUnit.Framework;
 
 using static NSubstitute.Arg;
 
-namespace Brighid.Identity.Client
+namespace Brighid.Identity.Client.Stores
 {
-    public class UserTokenStoreTests
+    internal class UserTokenStoreTests
     {
         [TestFixture]
         [Category("Unit")]

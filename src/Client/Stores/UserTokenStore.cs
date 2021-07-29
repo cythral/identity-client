@@ -4,10 +4,10 @@ using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 
-namespace Brighid.Identity.Client
+namespace Brighid.Identity.Client.Stores
 {
     /// <inheritdoc />
-    public class UserTokenStore : IUserTokenStore, IDisposable
+    internal class UserTokenStore : IUserTokenStore, IDisposable
     {
         private readonly ITokenStore tokenStore;
         private readonly IdentityServerClient identityServerClient;
