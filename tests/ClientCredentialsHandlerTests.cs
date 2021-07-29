@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using AutoFixture.AutoNSubstitute;
 using AutoFixture.NUnit3;
 
+using Brighid.Identity.Client.Stores;
+
 using FluentAssertions;
 
 using NSubstitute;
@@ -23,7 +25,7 @@ namespace Brighid.Identity.Client
 {
 #pragma warning disable IDE0055
     [Category("Unit")]
-    public class ClientCredentialsHandlerTests
+    internal class ClientCredentialsHandlerTests
     {
         [Test, Auto]
         public async Task SendAsync_ShouldUseDefaultToken_IfGiven(

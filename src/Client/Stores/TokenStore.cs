@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 using Microsoft.Extensions.Options;
 
-namespace Brighid.Identity.Client
+namespace Brighid.Identity.Client.Stores
 {
     /// <inheritdoc />
-    public class TokenStore<TConfig> : ITokenStore, IDisposable
+    internal class TokenStore<TConfig> : ITokenStore, IDisposable
         where TConfig : IdentityConfig
     {
         private readonly IdentityServerClient client;

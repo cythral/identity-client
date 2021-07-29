@@ -1,12 +1,12 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Brighid.Identity.Client
+namespace Brighid.Identity.Client.Stores
 {
     /// <summary>
     /// Store to retrieve and store user tokens in.
     /// </summary>
-    public interface IUserTokenStore
+    internal interface IUserTokenStore
     {
         /// <summary>
         /// Gets a user impersonation token for the given <paramref name="userId" /> and <paramref name="audience" />.

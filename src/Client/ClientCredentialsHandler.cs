@@ -6,11 +6,13 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
+using Brighid.Identity.Client.Stores;
+
 using Microsoft.Extensions.Options;
 
 namespace Brighid.Identity.Client
 {
-    public class ClientCredentialsHandler<TConfig> : DelegatingHandler
+    internal class ClientCredentialsHandler<TConfig> : DelegatingHandler
         where TConfig : IdentityConfig
     {
         private readonly ITokenStore tokenStore;

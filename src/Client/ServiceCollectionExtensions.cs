@@ -3,16 +3,16 @@ using System.Linq;
 using System.Net.Http;
 
 using Brighid.Identity.Client;
+using Brighid.Identity.Client.Stores;
+using Brighid.Identity.Client.Utils;
 
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
     public static partial class ServiceCollectionExtensions
     {
-        private const string DefaultIdentityServerUri = "http://identity.brigh.id";
         public static void ConfigureBrighidIdentity(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<IdentityConfig>(configuration);
@@ -22,26 +22,30 @@ namespace Microsoft.Extensions.DependencyInjection
         public static void ConfigureBrighidIdentity<TConfig>(this IServiceCollection services, IConfiguration configuration)
             where TConfig : IdentityConfig
         {
-            var config = services.BuildServiceProvider().GetRequiredService<IConfiguration>();
-            services.TryAddSingleton<ITokenStore, TokenStore<TConfig>>();
-            services.TryAddSingleton<IUserTokenStore, UserTokenStore>();
-            services.TryAddTransient<DelegatingHandler, ClientCredentialsHandler<TConfig>>();
+            services.ConfigureBrighidIdentity<TConfig>(configuration, new HttpClientHandler());
+        }
 
-            var identityServerUri = configuration.GetValue("IdentityServerUri", new Uri(DefaultIdentityServerUri));
-
-            services
-            .AddHttpClient<IdentityServerClient>(options =>
+        public static void ConfigureBrighidIdentity<TConfig>(this IServiceCollection services, IConfiguration configuration, HttpMessageHandler messageHandler)
+            where TConfig : IdentityConfig
+        {
+            var identityConfig = configuration.Get<TConfig>() ?? throw new Exception("Could not retrieve Brighid Identity configuration. ");
+            var identityServerUri = identityConfig.IdentityServerUri ?? new Uri(IdentityClientConstants.DefaultIdentityServerUri);
+            var identityOptions = Options.Options.Create(identityConfig!);
+            var httpClient = new HttpClient(messageHandler)
             {
-                options.BaseAddress = identityServerUri;
-                options.DefaultRequestVersion = new Version(2, 0);
-                options.DefaultVersionPolicy = HttpVersionPolicy.RequestVersionExact;
-            })
-            .ConfigureHttpMessageHandlerBuilder(builder =>
-            {
-                ConfigurePrimaryHandler(builder);
-            });
+                BaseAddress = identityServerUri,
+                DefaultRequestVersion = new Version(2, 0),
+                DefaultVersionPolicy = HttpVersionPolicy.RequestVersionExact,
+            };
 
-            services.ChangeFactoryDescriptorToSingleton<IdentityServerClient>();
+            var identityServerClient = new IdentityServerClient(httpClient);
+            var tokenStore = new TokenStore<TConfig>(identityServerClient, identityOptions);
+            var userTokenStore = new UserTokenStore(tokenStore, identityServerClient);
+            var cacheUtils = new DefaultCacheUtils(tokenStore, userTokenStore);
+
+            services.AddSingleton<ICacheUtils>(cacheUtils);
+            services.AddSingleton(messageHandler);
+            services.AddTransient<DelegatingHandler>(sp => new ClientCredentialsHandler<TConfig>(tokenStore, userTokenStore, identityOptions));
         }
 
         public static void UseBrighidIdentity<TServiceType, TImplementation>(this IServiceCollection services, Uri? baseAddress = null)
@@ -67,36 +71,28 @@ namespace Microsoft.Extensions.DependencyInjection
             where TServiceType : class
             where TImplementation : class, TServiceType
         {
-            services
-            .AddHttpClient<TServiceType, TImplementation>(typeof(TImplementation).FullName, configureClient)
-            .ConfigureHttpMessageHandlerBuilder(builder =>
+
+            var activator = ActivatorUtilities.CreateFactory(typeof(TImplementation), new Type[] { typeof(HttpClient), });
+
+            services.AddSingleton(serviceProvider =>
             {
-                ConfigurePrimaryHandler(builder);
-                ConfigureAdditionalHandlers(builder);
+                var primaryHandler = serviceProvider.GetRequiredService<HttpMessageHandler>();
+                var delegatingHandlers = serviceProvider.GetServices<DelegatingHandler>().ToArray();
+
+                for (var i = 0; i < delegatingHandlers.Length; i++)
+                {
+                    delegatingHandlers[i].InnerHandler = i != delegatingHandlers.Length - 1
+                        ? delegatingHandlers[i + 1]
+                        : primaryHandler;
+                }
+
+                var httpClient = new HttpClient(delegatingHandlers[0], false);
+                configureClient(httpClient);
+                return (TServiceType)activator(serviceProvider, new[] { httpClient });
             });
-
-            services.ChangeFactoryDescriptorToSingleton<TServiceType>();
         }
 
-        private static void ConfigurePrimaryHandler(Http.HttpMessageHandlerBuilder builder)
-        {
-            var primaryHandler = builder.Services.GetService<HttpMessageHandler>();
-            if (primaryHandler != null)
-            {
-                builder.PrimaryHandler = primaryHandler;
-            }
-        }
-
-        private static void ConfigureAdditionalHandlers(Http.HttpMessageHandlerBuilder builder)
-        {
-            var delegatingHandlers = builder.Services.GetServices<DelegatingHandler>();
-            foreach (var handler in delegatingHandlers)
-            {
-                builder.AdditionalHandlers.Add(handler);
-            }
-        }
-
-#pragma warning disable IDE0051
+#pragma warning disable IDE0051 // Used by Generators
         private static Uri GetIdentityServerApiBaseUri(IServiceCollection services)
         {
             var provider = services.BuildServiceProvider();
@@ -113,5 +109,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.Remove(oldDescriptor);
             services.Add(newDescriptor);
         }
+#pragma warning restore IDE0051
     }
 }
