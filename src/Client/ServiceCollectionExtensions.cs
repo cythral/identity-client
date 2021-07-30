@@ -47,7 +47,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<ICacheUtils>(cacheUtils);
             services.AddSingleton(identityOptions);
             services.AddSingleton(messageHandler);
-            services.AddTransient<DelegatingHandler>(sp => new ClientCredentialsHandler<TConfig>(tokenStore, userTokenStore, identityOptions));
+            services.AddSingleton<DelegatingHandler>(new ClientCredentialsHandler<TConfig>(tokenStore, userTokenStore, identityOptions));
         }
 
         public static void UseBrighidIdentity<TServiceType, TImplementation>(this IServiceCollection services, Uri? baseAddress = null)
