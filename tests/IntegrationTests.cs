@@ -15,6 +15,8 @@ using NUnit.Framework;
 
 using RichardSzalay.MockHttp;
 
+#pragma warning disable CS0436
+
 namespace Brighid.Identity.Client
 {
     public interface ITestIdentityService
@@ -129,6 +131,7 @@ namespace Brighid.Identity.Client
             var mockHandler = new MockHttpMessageHandler();
             mockHandler
             .Expect(HttpMethod.Post, $"{baseIdpAddress}oauth2/token")
+            .WithHeaders("user-agent", $"BrighidIdentityClient/{ThisAssembly.AssemblyInformationalVersion}")
             .WithFormData("client_id", clientId)
             .WithFormData("client_secret", clientSecret)
             .WithFormData("grant_type", "client_credentials")
@@ -137,6 +140,7 @@ namespace Brighid.Identity.Client
 
             mockHandler
             .Expect(HttpMethod.Get, $"{baseServiceAddress}")
+            .WithHeaders("user-agent", $"BrighidIdentityClient/{ThisAssembly.AssemblyInformationalVersion}")
             .WithHeaders("authorization", $"Bearer {accessToken}")
             .Respond("application/text", "OK");
 
@@ -177,6 +181,7 @@ namespace Brighid.Identity.Client
             var mockHandler = new MockHttpMessageHandler();
             mockHandler
             .Expect(HttpMethod.Post, $"{baseIdpAddress}oauth2/token")
+            .WithHeaders("user-agent", $"BrighidIdentityClient/{ThisAssembly.AssemblyInformationalVersion}")
             .WithFormData("client_id", clientId)
             .WithFormData("client_secret", clientSecret)
             .WithFormData("grant_type", "client_credentials")
@@ -184,6 +189,7 @@ namespace Brighid.Identity.Client
 
             mockHandler
             .Expect(HttpMethod.Post, $"{baseIdpAddress}oauth2/token")
+            .WithHeaders("user-agent", $"BrighidIdentityClient/{ThisAssembly.AssemblyInformationalVersion}")
             .WithFormData("access_token", accessToken)
             .WithFormData("user_id", userId)
             .WithFormData("audience", audience)
