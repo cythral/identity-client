@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 
 using Brighid.Identity.Client;
 using Brighid.Identity.Client.Stores;
@@ -36,6 +37,8 @@ namespace Microsoft.Extensions.DependencyInjection
                 DefaultRequestVersion = new Version(2, 0),
                 DefaultVersionPolicy = HttpVersionPolicy.RequestVersionExact,
             };
+
+            httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(IdentityClientConstants.ProductName, ThisAssembly.AssemblyInformationalVersion));
 
             var identityServerClient = new IdentityServerClient(httpClient);
             var tokenStore = new TokenStore<TConfig>(identityServerClient, identityOptions);
@@ -89,6 +92,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 }
 
                 var httpClient = new HttpClient(delegatingHandlers[0], false);
+                httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(IdentityClientConstants.ProductName, ThisAssembly.AssemblyInformationalVersion));
                 configureClient(httpClient);
 
                 return (TServiceType)activator(serviceProvider, new[] { httpClient });
