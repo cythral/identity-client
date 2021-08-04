@@ -42,12 +42,12 @@
       },
       "NSwag.CodeGeneration.CSharp": {
         "type": "Direct",
-        "requested": "[13.12.1, )",
-        "resolved": "13.12.1",
-        "contentHash": "gu5RHV4kDaPsamy0qw1IWGQoVpGx7+VAedhDi/Xshi33NI4YH8F2fwhQsS6HD7PrwpYqODa1SHEoirxQPW5yjA==",
+        "requested": "[13.13.0, )",
+        "resolved": "13.13.0",
+        "contentHash": "YCUzk2UmF+NQbX1UOxUS4NGQQALoQcoYTPHkZsKON2HY8A50WuqLYenVVKTYfc55OITqJPT9mDKeI7Es/SmY9g==",
         "dependencies": {
-          "NJsonSchema.CodeGeneration.CSharp": "10.4.6",
-          "NSwag.CodeGeneration": "13.12.1"
+          "NJsonSchema.CodeGeneration.CSharp": "10.5.0",
+          "NSwag.CodeGeneration": "13.13.0"
         }
       },
       "DotLiquid": {
@@ -180,8 +180,8 @@
       },
       "Namotion.Reflection": {
         "type": "Transitive",
-        "resolved": "1.0.23",
-        "contentHash": "a9KMvqCS0YZcsI5Ten89KCYSXQTtvgaqUzGNBqVl2T+ywGrz/+Y5o3x3yre5ZZho8z6rgu3Z5CC6RV06t2JaPQ==",
+        "resolved": "2.0.0",
+        "contentHash": "uZVn3rwoiHvOTE82fDQ/6XWQP+UvJu37HTwtTTTlRPni0N5RG+lL582onCRCcMd6KNKd+tvVBHmNfRZKHONl7w==",
         "dependencies": {
           "Microsoft.CSharp": "4.3.0"
         }
@@ -268,50 +268,50 @@
       },
       "NJsonSchema": {
         "type": "Transitive",
-        "resolved": "10.4.6",
-        "contentHash": "0Sq27O7/1Q0hI9kRR2XvrnH52ObyLdxkU9+BrEOT2oruyzXz4Z30fvI1qh4O6l/H4ZtU3akXXjN6AFWmb8hCqA==",
+        "resolved": "10.5.0",
+        "contentHash": "rID9VZLVMOcAwzHEjXqICKYBCplz8Utd7xAQyCR03T6qLRB/VOAPWMBdByq8054us1jqeN9QfT8/191NCkHDVw==",
         "dependencies": {
-          "Namotion.Reflection": "1.0.23",
+          "Namotion.Reflection": "2.0.0",
           "Newtonsoft.Json": "9.0.1"
         }
       },
       "NJsonSchema.CodeGeneration": {
         "type": "Transitive",
-        "resolved": "10.4.6",
-        "contentHash": "Uo9Kw5MiVksuJ6AXj52W36ire/RweHDCQwndIBbEpr3uFuRuVIn7vJGe42QZKFTB6/WEwCavP49oPeYiJ8HU+Q==",
+        "resolved": "10.5.0",
+        "contentHash": "lC11vpGWC11omcqxmTaDXw+ChmmwmtMjrR8S+EDCjsUwoXKIyTTkn+rXNuGvyJ5uyLhw1QKMVzzJOwndZQkaMQ==",
         "dependencies": {
           "DotLiquid": "2.0.385",
-          "NJsonSchema": "10.4.6",
+          "NJsonSchema": "10.5.0",
           "Newtonsoft.Json": "9.0.1"
         }
       },
       "NJsonSchema.CodeGeneration.CSharp": {
         "type": "Transitive",
-        "resolved": "10.4.6",
-        "contentHash": "sKmj+w0lZOt3MkOzI2GL82x7EBVvejM+nwQMAnzb1vXOWfYug1tWdHBk6rQiik8wqipXWnsLYCChTKjJ/iGoIg==",
+        "resolved": "10.5.0",
+        "contentHash": "11K2lpvwIuFXH2cbeWTuXEXlnigh4TtTlKZw3/dYTlUPFSgVfeN1tA9CweX3kJ/qYPvo/RACNbvGhkSkmgPNpQ==",
         "dependencies": {
-          "NJsonSchema": "10.4.6",
-          "NJsonSchema.CodeGeneration": "10.4.6",
+          "NJsonSchema": "10.5.0",
+          "NJsonSchema.CodeGeneration": "10.5.0",
           "Newtonsoft.Json": "9.0.1"
         }
       },
       "NSwag.CodeGeneration": {
         "type": "Transitive",
-        "resolved": "13.12.1",
-        "contentHash": "vyLTGLyPAO+oeXx/XRyAq2aaAyU8IPvhfy1QO2dCvgejSFzsdujCbZlYDMPZXeD/R0803TBoL5qpMh4MKIaC5g==",
+        "resolved": "13.13.0",
+        "contentHash": "bTGWyDUUW7dng+4QDtsd0WxG23Y6qnEaY8PGRdJ8GBYXmiGM1QGhioRisEjCreasbnneEzoZifRK6NCpdGHqKg==",
         "dependencies": {
-          "NJsonSchema": "10.4.6",
-          "NJsonSchema.CodeGeneration": "10.4.6",
-          "NSwag.Core": "13.12.1",
+          "NJsonSchema": "10.5.0",
+          "NJsonSchema.CodeGeneration": "10.5.0",
+          "NSwag.Core": "13.13.0",
           "Newtonsoft.Json": "9.0.1"
         }
       },
       "NSwag.Core": {
         "type": "Transitive",
-        "resolved": "13.12.1",
-        "contentHash": "SY9Ym9oKAOg79WcV4xN8ABjOAToDGI9H9YsaZ2WXgwOlXRpBskA87YkgoUMH8eilwJ0OiO8hKzHJA7KIzhpAaw==",
+        "resolved": "13.13.0",
+        "contentHash": "9VGIig84puMlzkUWyoTheYtVjJuzjD86I8A5l5iEC8HlQrM5JI9MIBRugTfjWbXeZiOPwufqh9z0k+E64d6vNQ==",
         "dependencies": {
-          "NJsonSchema": "10.4.6",
+          "NJsonSchema": "10.5.0",
           "Newtonsoft.Json": "9.0.1"
         }
       },
