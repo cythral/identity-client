@@ -10,6 +10,7 @@ namespace Brighid.Identity.Client
     public class IdentityServerClient
     {
         private static readonly Uri tokenUri = new("/oauth2/token", UriKind.Relative);
+
         private readonly HttpClient httpClient;
 
         public IdentityServerClient(HttpClient httpClient)
@@ -17,9 +18,13 @@ namespace Brighid.Identity.Client
             this.httpClient = httpClient;
         }
 
-        public Uri? BaseAddress { get => httpClient.BaseAddress; set => httpClient.BaseAddress = value; }
+        public Uri? BaseAddress
+        {
+            get => httpClient.BaseAddress;
+            set => httpClient.BaseAddress = value;
+        }
 
-        public virtual async Task<Token> ExchangeClientCredentialsForToken(string clientId, string clientSecret, string? audience = null, CancellationToken cancellationToken = default)
+        public virtual async Task<TokenResponse> ExchangeClientCredentialsForToken(string clientId, string clientSecret, string? audience = null, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var formData = new Dictionary<string, string?>
@@ -35,11 +40,11 @@ namespace Brighid.Identity.Client
             }
 
 #pragma warning disable IDE0004 // Cast is necessary
-            return await MakeTokenExchange((IEnumerable<KeyValuePair<string?, string?>>)formData, cancellationToken);
+            return await PerformExchange((IEnumerable<KeyValuePair<string?, string?>>)formData, cancellationToken);
 #pragma warning restore IDE0004
         }
 
-        public virtual async Task<Token> ExchangeAccessTokenForImpersonateToken(string accessToken, string userId, string audience, CancellationToken cancellationToken = default)
+        public virtual async Task<TokenResponse> ExchangeAccessTokenForImpersonateToken(string accessToken, string userId, string audience, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var formData = (IEnumerable<KeyValuePair<string?, string?>>)new Dictionary<string, string?>
@@ -50,18 +55,18 @@ namespace Brighid.Identity.Client
                 ["grant_type"] = IdentityClientConstants.GrantTypes.Impersonate,
             };
 
-            return await MakeTokenExchange(formData, cancellationToken);
+            return await PerformExchange(formData, cancellationToken);
         }
 
-        private async Task<Token> MakeTokenExchange(IEnumerable<KeyValuePair<string?, string?>> formData, CancellationToken cancellationToken)
+        private async Task<TokenResponse> PerformExchange(IEnumerable<KeyValuePair<string?, string?>> formData, CancellationToken cancellationToken)
         {
             using var requestContent = new FormUrlEncodedContent(formData);
             var response = await httpClient.PostAsync(tokenUri, requestContent, cancellationToken);
-            var token = await response.Content.ReadFromJsonAsync<Token>(cancellationToken: cancellationToken);
+            var token = await response.Content.ReadFromJsonAsync<TokenResponse>(cancellationToken: cancellationToken);
 
             return token switch
             {
-                Token => token,
+                TokenResponse => token,
                 _ => throw new Exception("Token unexpectedly deserialized to null value."),
             };
         }

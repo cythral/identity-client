@@ -23,9 +23,10 @@ namespace Brighid.Identity.Client.Stores
         public class GetTokenTests
         {
             [Test, Auto]
-            public async Task ShouldFetchTokenIfItsNotInTheCache(
-                Token token,
+            public async Task ShouldFetchAndValidateTokenIfItsNotInTheCache(
+                TokenResponse token,
                 [Frozen, Substitute] IdentityServerClient client,
+                [Frozen, Substitute] ITokenResponseValidator validator,
                 [Frozen, Substitute] IdentityConfig clientCredentials,
                 [Target] TokenStore<IdentityConfig> store
             )
@@ -37,12 +38,15 @@ namespace Brighid.Identity.Client.Stores
 
                 result.Should().Be(token.AccessToken);
                 await client.Received().ExchangeClientCredentialsForToken(Is(clientCredentials.ClientId), Is(clientCredentials.ClientSecret), Is(clientCredentials.Audience), Any<CancellationToken>());
+                await validator.Received().ValidateTokenResponse(Is(token), Any<CancellationToken>());
+
             }
 
             [Test, Auto]
-            public async Task ShouldNotFetchTokenIfItsInTheCache(
-                Token token,
+            public async Task ShouldNotFetchOrValidateTokenIfItsInTheCache(
+                TokenResponse token,
                 [Frozen, Substitute] IdentityServerClient client,
+                [Frozen, Substitute] ITokenResponseValidator validator,
                 [Frozen, Substitute] IdentityConfig clientCredentials,
                 [Target] TokenStore<IdentityConfig> store
             )
@@ -52,16 +56,19 @@ namespace Brighid.Identity.Client.Stores
 
                 await store.GetToken(cancellationToken);
                 client.ClearReceivedCalls();
+                validator.ClearReceivedCalls();
 
                 var result = await store.GetToken(cancellationToken);
                 result.Should().Be(token.AccessToken);
                 await client.DidNotReceive().ExchangeClientCredentialsForToken(Is(clientCredentials.ClientId), Is(clientCredentials.ClientSecret), Is(clientCredentials.Audience), Any<CancellationToken>());
+                await validator.DidNotReceive().ValidateTokenResponse(Is(token), Any<CancellationToken>());
             }
 
             [Test, Auto]
-            public async Task ShouldFetchTokenIfItsInTheCacheButHasExpired(
-                Token token,
+            public async Task ShouldFetchAndValidateTokenIfItsInTheCacheButHasExpired(
+                TokenResponse token,
                 [Frozen, Substitute] IdentityServerClient client,
+                [Frozen, Substitute] ITokenResponseValidator validator,
                 [Frozen, Substitute] IdentityConfig clientCredentials,
                 [Target] TokenStore<IdentityConfig> store
             )
@@ -75,7 +82,9 @@ namespace Brighid.Identity.Client.Stores
 
                 var result = await store.GetToken(cancellationToken);
                 result.Should().Be(token.AccessToken);
+
                 await client.Received().ExchangeClientCredentialsForToken(Is(clientCredentials.ClientId), Is(clientCredentials.ClientSecret), Is(clientCredentials.Audience), Any<CancellationToken>());
+                await validator.Received().ValidateTokenResponse(Is(token), Any<CancellationToken>());
             }
 
             [Test, Auto, Timeout(1000)]
@@ -88,7 +97,7 @@ namespace Brighid.Identity.Client.Stores
             {
                 var cancellationToken = new CancellationToken();
                 var exception = new Exception(message);
-                client.ExchangeClientCredentialsForToken(Any<string>(), Any<string>(), Any<string>(), Any<CancellationToken>()).Returns<Token>(x => throw exception);
+                client.ExchangeClientCredentialsForToken(Any<string>(), Any<string>(), Any<string>(), Any<CancellationToken>()).Returns<TokenResponse>(x => throw exception);
                 Func<Task> func = () => store.GetToken(cancellationToken);
 
                 (await func.Should().ThrowAsync<Exception>()).And.Message.Should().Be(message);
@@ -102,7 +111,7 @@ namespace Brighid.Identity.Client.Stores
         {
             [Test, Auto]
             public async Task ShouldCauseSubsequentRequestsToRefetchToken(
-                Token token,
+                TokenResponse token,
                 [Frozen, Substitute] IdentityServerClient client,
                 [Frozen, Substitute] IdentityConfig clientCredentials,
                 [Target] TokenStore<IdentityConfig> store

@@ -10,19 +10,22 @@ namespace Brighid.Identity.Client.Stores
     internal class UserTokenStore : IUserTokenStore, IDisposable
     {
         private readonly ITokenStore tokenStore;
+        private readonly ITokenResponseValidator tokenResponseValidator;
         private readonly IdentityServerClient identityServerClient;
         private CancellationTokenSource? cancellationTokenSource = new();
         private readonly CancellationToken cancellationToken;
         private readonly Channel<TokenRequest> requestChannel = Channel.CreateUnbounded<TokenRequest>();
-        private readonly ConcurrentDictionary<string, Token> userTokenCache = new();
+        private readonly ConcurrentDictionary<string, TokenResponse> tokenResponseCache = new();
 
         public UserTokenStore(
             ITokenStore tokenStore,
+            ITokenResponseValidator tokenResponseValidator,
             IdentityServerClient identityServerClient
         )
         {
             this.tokenStore = tokenStore;
             this.identityServerClient = identityServerClient;
+            this.tokenResponseValidator = tokenResponseValidator;
             cancellationToken = cancellationTokenSource.Token;
             Run();
         }
@@ -46,18 +49,18 @@ namespace Brighid.Identity.Client.Stores
         /// <inheritdoc />
         public void InvalidateAllUserTokens()
         {
-            userTokenCache.Clear();
+            tokenResponseCache.Clear();
         }
 
         /// <inheritdoc />
         public void InvalidateTokensForUser(string userId)
         {
             var keyToSearchFor = $"{userId}:";
-            foreach (var key in userTokenCache.Keys)
+            foreach (var key in tokenResponseCache.Keys)
             {
                 if (key.StartsWith(keyToSearchFor))
                 {
-                    userTokenCache.TryRemove(key, out _);
+                    tokenResponseCache.TryRemove(key, out _);
                 }
             }
         }
@@ -83,7 +86,7 @@ namespace Brighid.Identity.Client.Stores
                 try
                 {
                     var tokenKey = $"{request.UserId}:{request.Audience}";
-                    if (!userTokenCache.TryGetValue(tokenKey, out var result) || result.HasExpired)
+                    if (!tokenResponseCache.TryGetValue(tokenKey, out var result) || result.HasExpired)
                     {
                         var accessToken = await tokenStore.GetToken(linkedCancellationToken);
                         result = await identityServerClient.ExchangeAccessTokenForImpersonateToken(
@@ -93,10 +96,10 @@ namespace Brighid.Identity.Client.Stores
                             linkedCancellationToken
                         );
 
-                        userTokenCache[tokenKey] = result;
+                        await tokenResponseValidator.ValidateTokenResponse(result, linkedCancellationToken);
+                        tokenResponseCache[tokenKey] = result;
                     }
 
-                    // TODO: Verify ID Token
                     request.Promise.SetResult(result.AccessToken);
                 }
                 catch (Exception e)

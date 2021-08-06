@@ -25,7 +25,7 @@ namespace Brighid.Identity.Client
             Uri baseAddress,
             string clientId,
             string clientSecret,
-            Token response
+            TokenResponse response
         )
             {
                 using var handler = new MockHttpMessageHandler();
@@ -47,7 +47,7 @@ namespace Brighid.Identity.Client
                 Uri baseAddress,
                 string clientId,
                 string clientSecret,
-                Token response
+                TokenResponse response
             )
             {
                 using var handler = new MockHttpMessageHandler();
@@ -69,7 +69,7 @@ namespace Brighid.Identity.Client
                 Uri baseAddress,
                 string clientId,
                 string clientSecret,
-                Token response
+                TokenResponse response
             )
             {
                 using var handler = new MockHttpMessageHandler();
@@ -92,7 +92,7 @@ namespace Brighid.Identity.Client
                 string clientId,
                 string clientSecret,
                 string audience,
-                Token response
+                TokenResponse response
             )
             {
                 using var handler = new MockHttpMessageHandler();
@@ -114,7 +114,7 @@ namespace Brighid.Identity.Client
                 Uri baseAddress,
                 string clientId,
                 string clientSecret,
-                Token token
+                TokenResponse token
             )
             {
                 using var handler = new MockHttpMessageHandler();
@@ -149,7 +149,7 @@ namespace Brighid.Identity.Client
                 .Expect(HttpMethod.Post, $"{baseAddress}oauth2/token")
                 .Respond("application/json", "null");
 
-                Func<Task<Token>> func = async () => await client.ExchangeClientCredentialsForToken(clientId, clientSecret);
+                Func<Task<TokenResponse>> func = async () => await client.ExchangeClientCredentialsForToken(clientId, clientSecret);
                 await func.Should().ThrowAsync<Exception>();
 
                 handler.VerifyNoOutstandingExpectation();
@@ -166,7 +166,7 @@ namespace Brighid.Identity.Client
                 string accessToken,
                 string userId,
                 string audience,
-                Token response,
+                TokenResponse response,
                 CancellationToken cancellationToken
             )
             {
@@ -190,7 +190,7 @@ namespace Brighid.Identity.Client
                 string accessToken,
                 string userId,
                 string audience,
-                Token response,
+                TokenResponse response,
                 CancellationToken cancellationToken
             )
             {
@@ -214,7 +214,7 @@ namespace Brighid.Identity.Client
                 string accessToken,
                 string userId,
                 string audience,
-                Token response,
+                TokenResponse response,
                 CancellationToken cancellationToken
             )
             {
@@ -238,7 +238,7 @@ namespace Brighid.Identity.Client
                 string accessToken,
                 string userId,
                 string audience,
-                Token response,
+                TokenResponse response,
                 CancellationToken cancellationToken
             )
             {
@@ -262,7 +262,7 @@ namespace Brighid.Identity.Client
                 string accessToken,
                 string userId,
                 string audience,
-                Token response,
+                TokenResponse response,
                 CancellationToken cancellationToken
             )
             {
@@ -298,7 +298,7 @@ namespace Brighid.Identity.Client
                 .Expect(HttpMethod.Post, $"{baseAddress}oauth2/token")
                 .Respond("application/json", "null");
 
-                Func<Task<Token>> func = async () => await client.ExchangeAccessTokenForImpersonateToken(accessToken, userId, audience, cancellationToken);
+                Func<Task<TokenResponse>> func = async () => await client.ExchangeAccessTokenForImpersonateToken(accessToken, userId, audience, cancellationToken);
                 await func.Should().ThrowAsync<Exception>();
 
                 handler.VerifyNoOutstandingExpectation();
