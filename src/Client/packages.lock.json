@@ -236,8 +236,8 @@
       },
       "Namotion.Reflection": {
         "type": "Transitive",
-        "resolved": "2.0.1",
-        "contentHash": "j7CXToJNG6S36x2lkoAq2VhU+ZPtReREN+wDH/ImPeZ8G9Lh57tMUDd5qbRRDRFZ1MEKukhqz0wigS8my0xjRg==",
+        "resolved": "2.0.3",
+        "contentHash": "tZCe/UrSBAMW8A4TjD/SlpRHaWjnHlSWdyRuOXhf3yrE0OX+4fXg0uzj7mwFDclXznfCGRAZbP+akPt4G/mclw==",
         "dependencies": {
           "Microsoft.CSharp": "4.3.0"
         }
@@ -324,59 +324,59 @@
       },
       "NJsonSchema": {
         "type": "Transitive",
-        "resolved": "10.5.1",
-        "contentHash": "7BQMRdqSOlQ3klxxy66Wip1YvczGgu4rlzKcFeLpVqUXljo08VTq/HaSUDbtdfhLmWg8wqV2pvp6nBYEu+clWg==",
+        "resolved": "10.5.2",
+        "contentHash": "Vr2CbySuXh74TQFU0rGJYZOS492xOE64cPXdB7a0cfXJb/N45Bf4v7sd4LOla0jNhgc5V/B61Ko3qecriL195w==",
         "dependencies": {
-          "Namotion.Reflection": "2.0.1",
+          "Namotion.Reflection": "2.0.3",
           "Newtonsoft.Json": "9.0.1"
         }
       },
       "NJsonSchema.CodeGeneration": {
         "type": "Transitive",
-        "resolved": "10.5.1",
-        "contentHash": "a8A9msqNxPUG2VDNaWJ5lezt32nbaRkoxFMJRur21YaFjCUSVLew4gyBIg7War5Wxov/LFKAR7lNjUZQKXWzkw==",
+        "resolved": "10.5.2",
+        "contentHash": "s7t5JACaA70CrfnWXBgwiQJFFfcKakc2Uj1R4Pj72j2BFiD4b6ez2MgmUjpwPZQd8tN6HrBN4b1W+/xSY5liAA==",
         "dependencies": {
           "DotLiquid": "2.0.385",
-          "NJsonSchema": "10.5.1",
+          "NJsonSchema": "10.5.2",
           "Newtonsoft.Json": "9.0.1"
         }
       },
       "NJsonSchema.CodeGeneration.CSharp": {
         "type": "Transitive",
-        "resolved": "10.5.1",
-        "contentHash": "7jLacUjsu8ZtiQHCRNx6nlLibLBXJgQV2NZAXZP01zbmesjQOQBooaW48AftHOuC3FFV9GRv9+Z5/GJGeoscTw==",
+        "resolved": "10.5.2",
+        "contentHash": "858hOL0nNvdPNCBbU/KbKXk2rav9uSnKAVgVabth6Ttt3cbuZXWdufXWsVGoXqGgdel+RT5qXZOZlzARP5gSMQ==",
         "dependencies": {
-          "NJsonSchema": "10.5.1",
-          "NJsonSchema.CodeGeneration": "10.5.1",
+          "NJsonSchema": "10.5.2",
+          "NJsonSchema.CodeGeneration": "10.5.2",
           "Newtonsoft.Json": "9.0.1"
         }
       },
       "NSwag.CodeGeneration": {
         "type": "Transitive",
-        "resolved": "13.13.1",
-        "contentHash": "410Mq4mIOcQqd/XHIFQhyTwmXwBHbSoZBmjzwO0ydmMiyCnJZsnPIwBiixh2mYActf4RonSmYhIBUPAAFMFLsA==",
+        "resolved": "13.13.2",
+        "contentHash": "jYzFqG0UtannZP9A0kLJz1pHsJx8OukLot2uJc40VfEzwwr/jKaH2rNe1wHML7RTvFcWN2gYI1KJqIppBhP6aw==",
         "dependencies": {
-          "NJsonSchema": "10.5.1",
-          "NJsonSchema.CodeGeneration": "10.5.1",
-          "NSwag.Core": "13.13.1",
+          "NJsonSchema": "10.5.2",
+          "NJsonSchema.CodeGeneration": "10.5.2",
+          "NSwag.Core": "13.13.2",
           "Newtonsoft.Json": "9.0.1"
         }
       },
       "NSwag.CodeGeneration.CSharp": {
         "type": "Transitive",
-        "resolved": "13.13.1",
-        "contentHash": "/H5fAX4UUbgDIHjD7581MPytPpBJ13hLnXpLK/HgU2b7bSeGWWWpIz1zl5eXbWdVRbirOPMYw3EmKCDAfcjE9g==",
+        "resolved": "13.13.2",
+        "contentHash": "GLMPbcRdfdHA1dFnNJfSUzSbP/uQz4WRoTLX1qTBxCmCWgASAlegT82gauhEz4YSvrsaEhQ2pOVZfnvKyHV95w==",
         "dependencies": {
-          "NJsonSchema.CodeGeneration.CSharp": "10.5.1",
-          "NSwag.CodeGeneration": "13.13.1"
+          "NJsonSchema.CodeGeneration.CSharp": "10.5.2",
+          "NSwag.CodeGeneration": "13.13.2"
         }
       },
       "NSwag.Core": {
         "type": "Transitive",
-        "resolved": "13.13.1",
-        "contentHash": "gnRTiHboZJhLMdrHKNb49t1xwyX+B+592lvhZhAYC5Dys0bChS+ku8hVJB7p13Owk2Js9tAnReqEDMglwHfdZg==",
+        "resolved": "13.13.2",
+        "contentHash": "d6V9ohXr6Rvf/chR4uW5EU6zFd+RTlGkiiE1pT8GaMse10/ZmNk8qRSu+ICUzr5/8kX7eGm2QQ4q8BfLOS9SJQ==",
         "dependencies": {
-          "NJsonSchema": "10.5.1",
+          "NJsonSchema": "10.5.2",
           "Newtonsoft.Json": "9.0.1"
         }
       },
@@ -1367,7 +1367,7 @@
         "dependencies": {
           "Microsoft.CodeAnalysis": "3.10.0",
           "Microsoft.CodeAnalysis.CSharp.Workspaces": "3.10.0",
-          "NSwag.CodeGeneration.CSharp": "13.13.1"
+          "NSwag.CodeGeneration.CSharp": "13.13.2"
         }
       }
     }
