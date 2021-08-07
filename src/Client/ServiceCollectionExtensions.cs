@@ -1,4 +1,5 @@
 using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -7,7 +8,9 @@ using Brighid.Identity.Client;
 using Brighid.Identity.Client.Stores;
 using Brighid.Identity.Client.Utils;
 
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Microsoft.Extensions.DependencyInjection
 {
@@ -31,6 +34,7 @@ namespace Microsoft.Extensions.DependencyInjection
             var identityConfig = configuration.Get<TConfig>() ?? throw new Exception("Could not retrieve Brighid Identity configuration.");
             var identityServerUri = identityConfig.IdentityServerUri ?? new Uri(IdentityClientConstants.DefaultIdentityServerUri);
             var identityOptions = Options.Options.Create(identityConfig!);
+            var cacheOptions = new MemoryCacheOptions();
             var httpClient = new HttpClient(messageHandler)
             {
                 BaseAddress = identityServerUri,
@@ -40,17 +44,28 @@ namespace Microsoft.Extensions.DependencyInjection
 
             httpClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(IdentityClientConstants.ProductName, ThisAssembly.AssemblyInformationalVersion));
 
-            var identityServerClient = new IdentityServerClient(httpClient);
-            var tokenStore = new TokenStore<TConfig>(identityServerClient, identityOptions);
-            var userTokenStore = new UserTokenStore(tokenStore, identityServerClient);
-            var cacheUtils = new DefaultCacheUtils(tokenStore, userTokenStore);
-            var metadataProvider = new DefaultMetadataProvider(identityConfig);
+            var internalServices = new ServiceCollection();
+            internalServices.AddSingleton(httpClient);
+            internalServices.AddSingleton(identityOptions);
+            internalServices.AddSingleton<IdentityConfig>(identityConfig);
+            internalServices.AddSingleton<IdentityServerClient>();
+            internalServices.AddSingleton<ITokenStore, TokenStore<TConfig>>();
+            internalServices.AddSingleton<IUserTokenStore, UserTokenStore>();
+            internalServices.AddSingleton<ICacheUtils, DefaultCacheUtils>();
+            internalServices.AddSingleton<IMetadataProvider, DefaultMetadataProvider>();
+            internalServices.AddSingleton<ITokenResponseValidator, TokenResponseValidator>();
+            internalServices.AddSingleton<ISigningKeyResolver, SigningKeyResolver>();
+            internalServices.AddSingleton<ITokenCryptoService, TokenCryptoService>();
+            internalServices.AddSingleton<ISecurityTokenValidator, JwtSecurityTokenHandler>();
+            internalServices.AddSingleton<IMemoryCache>(new MemoryCache(cacheOptions));
+            internalServices.AddSingleton<DelegatingHandler, ClientCredentialsHandler<TConfig>>();
 
-            services.AddSingleton<IMetadataProvider>(metadataProvider);
-            services.AddSingleton<ICacheUtils>(cacheUtils);
+            var internalServiceProvider = internalServices.BuildServiceProvider();
+            services.AddSingleton(internalServiceProvider.GetRequiredService<IMetadataProvider>());
+            services.AddSingleton(internalServiceProvider.GetRequiredService<ICacheUtils>());
+            services.AddSingleton(internalServiceProvider.GetRequiredService<DelegatingHandler>());
             services.AddSingleton(identityOptions);
             services.AddSingleton(messageHandler);
-            services.AddSingleton<DelegatingHandler>(new ClientCredentialsHandler<TConfig>(tokenStore, userTokenStore, identityOptions));
         }
 
         public static void UseBrighidIdentity<TServiceType, TImplementation>(this IServiceCollection services, Uri? baseAddress = null)

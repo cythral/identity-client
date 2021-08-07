@@ -12,24 +12,27 @@ namespace Brighid.Identity.Client.Stores
         where TConfig : IdentityConfig
     {
         private readonly IdentityServerClient client;
+        private readonly ITokenResponseValidator validator;
         private readonly IdentityConfig options;
         private CancellationTokenSource? cancellationTokenSource = new();
         private readonly CancellationToken cancellationToken;
         private readonly Channel<TokenRequest> requestChannel = Channel.CreateUnbounded<TokenRequest>();
-        private readonly Channel<string?> responseChannel = Channel.CreateUnbounded<string?>();
-        private Token? Token { get; set; }
+        private TokenResponse? TokenResponse { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="TokenStore{TConfig}" /> class.
         /// </summary>
         /// <param name="client">Client used to exchange client credentials for tokens with.</param>
+        /// <param name="validator">Service used to validate token responses received from the Identity Service.</param>
         /// <param name="options">Options containing client credentials.</param>
         public TokenStore(
             IdentityServerClient client,
+            ITokenResponseValidator validator,
             IOptions<TConfig> options
         )
         {
             this.client = client;
+            this.validator = validator;
             this.options = options.Value;
             cancellationToken = cancellationTokenSource.Token;
             Run();
@@ -52,7 +55,7 @@ namespace Brighid.Identity.Client.Stores
         /// <inheritdoc />
         public void InvalidateToken()
         {
-            Token = null;
+            TokenResponse = null;
         }
 
         /// <summary>
@@ -75,13 +78,14 @@ namespace Brighid.Identity.Client.Stores
 
                 try
                 {
-                    if (Token == null || Token.HasExpired)
+                    if (TokenResponse == null || TokenResponse.HasExpired)
                     {
-                        Token = await client.ExchangeClientCredentialsForToken(options.ClientId, options.ClientSecret, options.Audience, linkedCancellationToken);
+                        var response = await client.ExchangeClientCredentialsForToken(options.ClientId, options.ClientSecret, options.Audience, linkedCancellationToken);
+                        await validator.ValidateTokenResponse(response);
+                        TokenResponse = response;
                     }
 
-                    // TODO: Verify ID Token
-                    request.Promise.SetResult(Token.AccessToken);
+                    request.Promise.SetResult(TokenResponse.AccessToken);
                 }
                 catch (Exception e)
                 {

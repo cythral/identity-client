@@ -27,7 +27,7 @@ namespace Brighid.Identity.Client.Stores
                 string userId,
                 string audience,
                 string accessToken,
-                Token token,
+                TokenResponse token,
                 [Frozen, Substitute] ITokenStore tokenStore,
                 [Frozen, Substitute] IdentityServerClient client,
                 [Target] UserTokenStore store
@@ -45,12 +45,13 @@ namespace Brighid.Identity.Client.Stores
             }
 
             [Test, Auto]
-            public async Task ShouldNotFetchTokenIfItsInTheCache(
+            public async Task ShouldNotFetchOrValidateTokenIfItsInTheCache(
                 string userId,
                 string audience,
                 string accessToken,
-                Token token,
+                TokenResponse token,
                 [Frozen, Substitute] ITokenStore tokenStore,
+                [Frozen, Substitute] ITokenResponseValidator validator,
                 [Frozen, Substitute] IdentityServerClient client,
                 [Target] UserTokenStore store
             )
@@ -61,21 +62,24 @@ namespace Brighid.Identity.Client.Stores
 
                 await store.GetUserToken(userId, audience, cancellationToken);
                 client.ClearReceivedCalls();
+                validator.ClearReceivedCalls();
 
                 var result = await store.GetUserToken(userId, audience, cancellationToken);
                 result.Should().Be(token.AccessToken);
 
                 await client.DidNotReceive().ExchangeAccessTokenForImpersonateToken(Is(accessToken), Is(userId), Is(audience), Any<CancellationToken>());
+                await validator.DidNotReceive().ValidateTokenResponse(Is(token), Any<CancellationToken>());
             }
 
             [Test, Auto]
-            public async Task ShouldFetchNewTokenIfUserIdIsTheSameButAudienceIsDifferent(
+            public async Task ShouldFetchAndValidateNewTokenIfUserIdIsTheSameButAudienceIsDifferent(
                 string userId,
                 string audience1,
                 string audience2,
                 string accessToken,
-                Token token,
+                TokenResponse token,
                 [Frozen, Substitute] ITokenStore tokenStore,
+                [Frozen, Substitute] ITokenResponseValidator validator,
                 [Frozen, Substitute] IdentityServerClient client,
                 [Target] UserTokenStore store
             )
@@ -91,15 +95,17 @@ namespace Brighid.Identity.Client.Stores
                 result.Should().Be(token.AccessToken);
 
                 await client.Received().ExchangeAccessTokenForImpersonateToken(Is(accessToken), Is(userId), Is(audience2), Any<CancellationToken>());
+                await validator.Received().ValidateTokenResponse(Is(token), Any<CancellationToken>());
             }
 
             [Test, Auto]
-            public async Task ShouldFetchTokenIfItsInTheCacheButHasExpired(
+            public async Task ShouldFetchAndValidateTokenIfItsInTheCacheButHasExpired(
                 string userId,
                 string audience,
                 string accessToken,
-                Token token,
+                TokenResponse token,
                 [Frozen, Substitute] ITokenStore tokenStore,
+                [Frozen, Substitute] ITokenResponseValidator validator,
                 [Frozen, Substitute] IdentityServerClient client,
                 [Target] UserTokenStore store
             )
@@ -114,7 +120,9 @@ namespace Brighid.Identity.Client.Stores
 
                 var result = await store.GetUserToken(userId, audience, cancellationToken);
                 result.Should().Be(token.AccessToken);
+
                 await client.Received().ExchangeAccessTokenForImpersonateToken(Is(accessToken), Is(userId), Is(audience), Any<CancellationToken>());
+                await validator.Received().ValidateTokenResponse(Is(token), Any<CancellationToken>());
             }
 
             [Test, Auto, Timeout(1000)]
@@ -149,7 +157,7 @@ namespace Brighid.Identity.Client.Stores
                 string userId2,
                 string audience,
                 string accessToken,
-                Token token,
+                TokenResponse token,
                 [Frozen, Substitute] ITokenStore tokenStore,
                 [Frozen, Substitute] IdentityServerClient client,
                 [Target] UserTokenStore store
@@ -183,7 +191,7 @@ namespace Brighid.Identity.Client.Stores
                 string audience1,
                 string audience2,
                 string accessToken,
-                Token token,
+                TokenResponse token,
                 [Frozen, Substitute] ITokenStore tokenStore,
                 [Frozen, Substitute] IdentityServerClient client,
                 [Target] UserTokenStore store

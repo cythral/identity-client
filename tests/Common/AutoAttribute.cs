@@ -6,6 +6,11 @@ using AutoFixture;
 using AutoFixture.AutoNSubstitute;
 using AutoFixture.NUnit3;
 
+using Microsoft.Extensions.Caching.Memory;
+using Microsoft.IdentityModel.Tokens;
+
+using NSubstitute;
+
 internal class AutoAttribute : AutoDataAttribute
 {
     public AutoAttribute() : base(Create) { }
@@ -15,6 +20,8 @@ internal class AutoAttribute : AutoDataAttribute
         var fixture = new Fixture();
 
         fixture.Inject(new CancellationToken(false));
+        fixture.Inject(Substitute.For<SecurityKey>());
+        fixture.Register<IMemoryCache>(() => new MemoryCache(new MemoryCacheOptions()));
         fixture.Customize(new AutoNSubstituteCustomization { ConfigureMembers = true });
         fixture.Customizations.Add(new TypeOmitter<JsonElement>());
         fixture.Customizations.Insert(-1, new TargetRelay());
