@@ -25,7 +25,6 @@
     <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <SkipDefaultEditorConfigAsAdditionalFile>true</SkipDefaultEditorConfigAsAdditionalFile>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
@@ -37,9 +36,6 @@
     <RestorePackagesPath>$(MSBuildThisFileDirectory).nuget</RestorePackagesPath>
     <CompilerGeneratedFilesOutputPath>$(MSBuildThisFileDirectory)obj\$(MSBuildProjectName)\$(Configuration)</CompilerGeneratedFilesOutputPath>
   </PropertyGroup>
-  <ItemGroup Condition="Exists('$(MSBuildThisFileDirectory)\.editorconfig')">
-    <AdditionalFiles Include="$(MSBuildThisFileDirectory)\.editorconfig" />
-  </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)LICENSE.txt" Pack="true" PackagePath="LICENSE.txt" />
   </ItemGroup>
