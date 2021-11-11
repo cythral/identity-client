@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net5.0</TargetFramework>
         <NoWarn>IDE0058;CA2007;CA1068</NoWarn>
     </PropertyGroup>
 
@@ -11,7 +10,7 @@
         <PackageReference Include="AWSSDK.KeyManagementService" Version="3.7.1.6" />
         <PackageReference Include="FluentAssertions" Version="5.10.3" />
         <PackageReference Include="NSubstitute" Version="4.2.2" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.10.0" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
         <PackageReference Include="nunit" Version="3.13.2" />
         <PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
         <PackageReference Include="RichardSzalay.MockHttp" Version="6.0.0" />

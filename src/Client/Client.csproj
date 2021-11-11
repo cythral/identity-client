@@ -1,6 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
     <PackageId>Brighid.Identity.Client</PackageId>
     <AssemblyName>$(PackageId)</AssemblyName>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
