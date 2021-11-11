@@ -22,7 +22,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
-    <RestoreLockedMode Condition="$(NUKEEPER) != 'true'">true</RestoreLockedMode>
+    <RestoreLockedMode>true</RestoreLockedMode>
     <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
