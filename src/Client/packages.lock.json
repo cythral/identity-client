@@ -398,28 +398,28 @@
       },
       "NSwag.CodeGeneration": {
         "type": "Transitive",
-        "resolved": "13.14.4",
-        "contentHash": "wL/o0D15B+ZMbQAtaFPrVHXPePad9C5/v6QuK/Ci0sUkqItKvVPh6Jwfu2ZkA78ytKUZmUgXgQr6nt7BHyzt8Q==",
+        "resolved": "13.14.5",
+        "contentHash": "ELk3ZcD9hnRcjZad4xFhgnD61zkPxajrX6lafBAObk1WrXXg/CpUhDoMzW6HM81IVA1hcdHzWaEGcVBn8y4y3w==",
         "dependencies": {
           "NJsonSchema": "10.5.2",
           "NJsonSchema.CodeGeneration": "10.5.2",
-          "NSwag.Core": "13.14.4",
+          "NSwag.Core": "13.14.5",
           "Newtonsoft.Json": "9.0.1"
         }
       },
       "NSwag.CodeGeneration.CSharp": {
         "type": "Transitive",
-        "resolved": "13.14.4",
-        "contentHash": "eKWpxQ3tLgVzKdWOfKuu6Q2K9cRsvgFcDFVS2gB9nPobOkHW5CA6KreqoLKDSofsXAg8GokO8F6W4tTnrqaQsg==",
+        "resolved": "13.14.5",
+        "contentHash": "4CtpEj9Sa4lOPBTZYnBMI5w0+PVPoA4MR4UAMUEbHNlvxNiJXMQkxXbLurGKr4u50ykujZhxTcIBIZViothksA==",
         "dependencies": {
           "NJsonSchema.CodeGeneration.CSharp": "10.5.2",
-          "NSwag.CodeGeneration": "13.14.4"
+          "NSwag.CodeGeneration": "13.14.5"
         }
       },
       "NSwag.Core": {
         "type": "Transitive",
-        "resolved": "13.14.4",
-        "contentHash": "y6tJ6EycjpdLHT443h5+CMsL3YLIybbXSRQHtI8OCj0cm44X9QgL28M2Am3HHVKSy9XiEphE4m57l3YpQcvTvQ==",
+        "resolved": "13.14.5",
+        "contentHash": "EkcMWtXZ7SRxxUUAjl7nJp7sJL8O8Pm3BDdVUdj7kPIXO7FVUFq/A+AOxItOZ5iXX7idGzv2LdDrbnhUGoz+7w==",
         "dependencies": {
           "NJsonSchema": "10.5.2",
           "Newtonsoft.Json": "9.0.1"
@@ -1400,7 +1400,7 @@
         "dependencies": {
           "Microsoft.CodeAnalysis": "4.0.1",
           "Microsoft.CodeAnalysis.CSharp.Workspaces": "4.0.1",
-          "NSwag.CodeGeneration.CSharp": "13.14.4"
+          "NSwag.CodeGeneration.CSharp": "13.14.5"
         }
       }
     }
