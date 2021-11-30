@@ -2,6 +2,10 @@
 
     <PropertyGroup>
         <NoWarn>IDE0058;CA2007;CA1068</NoWarn>
+        <IsPackable>false</IsPackable>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+        <PreserveCompilationContext>true</PreserveCompilationContext>
+        <CoreCompileDependsOn>CleanTestResultsDirectory;$(CoreCompileDependsOn)</CoreCompileDependsOn>
     </PropertyGroup>
 
     <ItemGroup>
@@ -14,10 +18,28 @@
         <PackageReference Include="nunit" Version="3.13.2" />
         <PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
         <PackageReference Include="RichardSzalay.MockHttp" Version="6.0.0" />
+        <PackageReference Include="coverlet.collector" Version="3.1.0" PrivateAssets="all" />
     </ItemGroup>
 
     <ItemGroup>
         <ProjectReference Include="../src/Client/Client.csproj" />
     </ItemGroup>
 
+    <Target Name="PrepareVSTestEnv" BeforeTargets="VSTest">
+        <PropertyGroup>
+            <VSTestResultsDirectory>$(IntermediateOutputPath)TestResults/</VSTestResultsDirectory>
+        </PropertyGroup>
+    </Target>
+
+    <Target Name="CleanTestResultsDirectory" DependsOnTargets="PrepareVSTestEnv">
+        <RemoveDir Directories="$(VSTestResultsDirectory)" />
+    </Target>
+
+    <Target Name="MoveTestCoverageResultsFile" AfterTargets="VSTest" DependsOnTargets="PrepareVSTestEnv">
+        <ItemGroup>
+            <CoverageFile Include="$(VSTestResultsDirectory)*/coverage.cobertura.xml" />
+        </ItemGroup>
+
+        <Copy SourceFiles="@(CoverageFile)" DestinationFiles="$(IntermediateOutputPath)/coverage.xml" />
+    </Target>
 </Project>
