@@ -1,3 +1,6 @@
+[![codecov](https://codecov.io/gh/cythral/identity-client/branch/master/graph/badge.svg?token=jeVQjG3V4y)](https://codecov.io/gh/cythral/identity-client)
+
+
 ## Installation
 
 ```
