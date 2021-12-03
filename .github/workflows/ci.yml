@@ -72,7 +72,7 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./obj/Tests/Results/coverage.xml
+          file: ./obj/Tests/Results/coverage.cobertura.xml
           fail_ci_if_error: true
 
       - name: Upload Nugets
