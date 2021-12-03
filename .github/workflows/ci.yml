@@ -67,6 +67,14 @@ jobs:
       - name: Test
         run: dotnet test --no-build
 
+      - name: Upload Coverage
+        uses: codecov/codecov-action@v2
+        if: matrix.os == 'ubuntu-latest'
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./obj/Tests/Results/coverage.cobertura.xml
+          fail_ci_if_error: true
+
       - name: Upload Nugets
         if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v2

@@ -1,11 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk" InitialTargets="CleanResultsDirectory">
 
     <PropertyGroup>
         <NoWarn>IDE0058;CA2007;CA1068</NoWarn>
         <IsPackable>false</IsPackable>
         <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
         <PreserveCompilationContext>true</PreserveCompilationContext>
-        <CoreCompileDependsOn>CleanTestResultsDirectory;$(CoreCompileDependsOn)</CoreCompileDependsOn>
+        <RunSettingsFilePath>$(MSBuildProjectDirectory)/.runsettings</RunSettingsFilePath>
     </PropertyGroup>
 
     <ItemGroup>
@@ -25,21 +25,17 @@
         <ProjectReference Include="../src/Client/Client.csproj" />
     </ItemGroup>
 
-    <Target Name="PrepareVSTestEnv" BeforeTargets="VSTest">
-        <PropertyGroup>
-            <VSTestResultsDirectory>$(IntermediateOutputPath)TestResults/</VSTestResultsDirectory>
-        </PropertyGroup>
+    <Target Name="CleanResultsDirectory">
+        <RemoveDir Directories="$(MSBuildThisFileDirectory)/../obj/Tests/IntermediateResults" />
+        <RemoveDir Directories="$(MSBuildThisFileDirectory)/../obj/Tests/Results" />
     </Target>
 
-    <Target Name="CleanTestResultsDirectory" DependsOnTargets="PrepareVSTestEnv">
-        <RemoveDir Directories="$(VSTestResultsDirectory)" />
-    </Target>
-
-    <Target Name="MoveTestCoverageResultsFile" AfterTargets="VSTest" DependsOnTargets="PrepareVSTestEnv">
+    <Target Name="CopyResults" AfterTargets="VSTest">
         <ItemGroup>
-            <CoverageFile Include="$(VSTestResultsDirectory)*/coverage.cobertura.xml" />
+            <ResultFiles Include="$(MSBuildThisFileDirectory)/../obj/Tests/IntermediateResults/**/*.xml" />
         </ItemGroup>
-
-        <Copy SourceFiles="@(CoverageFile)" DestinationFiles="$(IntermediateOutputPath)/coverage.xml" />
+        
+        <MakeDir Directories="$(MSBuildThisFileDirectory)/../obj/Tests/Results" />
+        <Copy SourceFiles="@(ResultFiles)" DestinationFolder="$(MSBuildThisFileDirectory)/../obj/Tests/Results" />
     </Target>
 </Project>

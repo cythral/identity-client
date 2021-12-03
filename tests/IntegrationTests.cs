@@ -24,6 +24,8 @@ namespace Brighid.Identity.Client
 {
     public interface ITestIdentityService
     {
+        Version DefaultRequestVersion { get; }
+        HttpVersionPolicy DefaultVersionPolicy { get; }
         Task SendAsync();
         Task SendImpersonateAsync(string userId, string audience);
     }
@@ -36,6 +38,10 @@ namespace Brighid.Identity.Client
         {
             this.httpClient = httpClient;
         }
+
+        public Version DefaultRequestVersion => httpClient.DefaultRequestVersion;
+
+        public HttpVersionPolicy DefaultVersionPolicy => httpClient.DefaultVersionPolicy;
 
         public Task SendAsync()
         {
@@ -155,6 +161,35 @@ namespace Brighid.Identity.Client
             var identityOptions = provider.GetService<IOptions<CustomIdentityConfig>>();
 
             identityOptions.Should().NotBeNull();
+        }
+
+        [Test, Auto]
+        public void Http2ShouldBeUsedIfIndicated(
+            Uri baseIdpAddress,
+            Uri baseServiceAddress,
+            string clientId,
+            string clientSecret
+        )
+        {
+            var serviceCollection = new ServiceCollection();
+            var mockHandler = new MockHttpMessageHandler();
+            var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string>
+            {
+                ["Identity:IdentityServerUri"] = baseIdpAddress.ToString(),
+                ["Identity:ClientId"] = clientId,
+                ["Identity:ClientSecret"] = clientSecret,
+            }).Build();
+
+            serviceCollection.AddSingleton<IConfiguration>(configuration);
+            serviceCollection.ConfigureBrighidIdentity<CustomIdentityConfig>(configuration.GetSection("Identity"), mockHandler);
+            serviceCollection.UseBrighidIdentityWithHttp2<ITestIdentityService, TestIdentityService>(baseServiceAddress);
+
+            var provider = serviceCollection.BuildServiceProvider();
+            var identityService = provider.GetRequiredService<ITestIdentityService>();
+
+            identityService.DefaultRequestVersion.Should().Be(new Version(2, 0));
+            identityService.DefaultVersionPolicy.Should().Be(HttpVersionPolicy.RequestVersionExact);
         }
 
         [Test, Auto]
