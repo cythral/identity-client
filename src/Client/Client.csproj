@@ -19,7 +19,7 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.15.1" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="../ClientGenerator/ClientGenerator.csproj" OutputItemType="Analyzer" PrivateAssets="all" />
+    <ProjectReference Include="../ClientGenerator/ClientGenerator.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" PrivateAssets="all" />
   </ItemGroup>
   <ItemGroup>
     <CompilerVisibleProperty Include="TemplateDirectory" />
