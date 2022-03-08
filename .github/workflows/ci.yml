@@ -77,13 +77,13 @@ jobs:
 
       - name: Upload Nugets
         if: matrix.os == 'ubuntu-latest'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: nugets
           path: bin/Packages/${{ env.CONFIGURATION }}
 
       - name: Upload Logs
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: logs-${{ matrix.os }}
           path: obj/logs/
