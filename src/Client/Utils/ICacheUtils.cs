@@ -3,6 +3,11 @@ namespace Brighid.Identity.Client.Utils
     public interface ICacheUtils
     {
         /// <summary>
+        /// Gets the number of currently cached user tokens.
+        /// </summary>
+        int UserTokenCount { get; }
+
+        /// <summary>
         /// Invalidates / clears out the primary token from the Token Store, causing a new one to be fetched on the next request.
         /// </summary>
         void InvalidatePrimaryToken();

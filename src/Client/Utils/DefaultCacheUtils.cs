@@ -17,6 +17,9 @@ namespace Brighid.Identity.Client.Utils
         }
 
         /// <inheritdoc />
+        public int UserTokenCount => userTokenStore.TokenCount;
+
+        /// <inheritdoc />
         public void InvalidatePrimaryToken()
         {
             tokenStore.InvalidateToken();

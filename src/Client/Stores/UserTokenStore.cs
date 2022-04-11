@@ -31,6 +31,9 @@ namespace Brighid.Identity.Client.Stores
         }
 
         /// <inheritdoc />
+        public int TokenCount => tokenResponseCache.Count;
+
+        /// <inheritdoc />
         public async Task<string> GetUserToken(string userId, string audience, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
