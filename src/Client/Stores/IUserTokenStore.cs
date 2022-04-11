@@ -9,6 +9,12 @@ namespace Brighid.Identity.Client.Stores
     internal interface IUserTokenStore
     {
         /// <summary>
+        /// Gets the number of user tokens that are currently cached.
+        /// </summary>
+        /// <value>Number of user tokens that are currently cached.</value>
+        int TokenCount { get; }
+
+        /// <summary>
         /// Gets a user impersonation token for the given <paramref name="userId" /> and <paramref name="audience" />.
         /// </summary>
         /// <param name="userId">ID of the user to impersonate.</param>

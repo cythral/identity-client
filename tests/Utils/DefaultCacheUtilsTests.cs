@@ -3,6 +3,8 @@ using AutoFixture.NUnit3;
 
 using Brighid.Identity.Client.Stores;
 
+using FluentAssertions;
+
 using NSubstitute;
 
 using NUnit.Framework;
@@ -13,6 +15,18 @@ namespace Brighid.Identity.Client.Utils
 {
     internal class DefaultCacheUtilsTests
     {
+        [Test, Auto]
+        public void UserTokenCount_ShouldReturnNumberOfCachedUserTokens(
+            int count,
+            [Frozen, Substitute] IUserTokenStore userTokenStore,
+            [Target] DefaultCacheUtils cacheUtils
+        )
+        {
+            userTokenStore.TokenCount.Returns(count);
+
+            cacheUtils.UserTokenCount.Should().Be(count);
+        }
+
         [Test, Auto]
         public void InvalidatePrimaryToken_ShouldCallTokenStore_InvalidateToken(
             [Frozen, Substitute] ITokenStore tokenStore,

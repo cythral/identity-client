@@ -20,6 +20,32 @@ namespace Brighid.Identity.Client.Stores
     {
         [TestFixture]
         [Category("Unit")]
+        public class TokenCountTests
+        {
+
+            [Test, Auto]
+            public async Task ShouldReturnTheNumberOfCurrentlyCachedTokens(
+                string userId,
+                string audience,
+                string accessToken,
+                TokenResponse token,
+                [Frozen, Substitute] ITokenStore tokenStore,
+                [Frozen, Substitute] IdentityServerClient client,
+                [Target] UserTokenStore store
+            )
+            {
+                var cancellationToken = new CancellationToken();
+                tokenStore.GetToken(Any<CancellationToken>()).Returns(accessToken);
+                client.ExchangeAccessTokenForImpersonateToken(Any<string>(), Any<string>(), Any<string>(), Any<CancellationToken>()).Returns(token);
+
+                store.TokenCount.Should().Be(0);
+                await store.GetUserToken(userId, audience, cancellationToken);
+                store.TokenCount.Should().Be(1);
+            }
+        }
+
+        [TestFixture]
+        [Category("Unit")]
         public class GetUserTokenTests
         {
             [Test, Auto]
