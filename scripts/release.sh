@@ -22,7 +22,8 @@ function bump_version()
 {
     echo -n "Enter next next version (without v prefix): "
     read -r nextVersion
-    git checkout -b release-prep/v$nextVersion > /dev/null
+    branch=release-prep/v$nextVersion
+    git checkout -b $branch > /dev/null
 
     newVersionJsonContent=$(cat version.json | jq ".version=\"$nextVersion\"" | jq .)
     echo $newVersionJsonContent > version.json
@@ -35,6 +36,7 @@ function bump_version()
     gh pr create --title "v$nextVersion Release Prep" --body "- Bumps version to v$nextVersion\n- Adds release notes file"
     gh pr merge --squash --auto --delete-branch
     git checkout master
+    git branch -D $branch
 }
 
 ensure_default_branch
