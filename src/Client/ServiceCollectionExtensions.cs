@@ -58,12 +58,12 @@ namespace Microsoft.Extensions.DependencyInjection
             internalServices.AddSingleton<ITokenCryptoService, TokenCryptoService>();
             internalServices.AddSingleton<ISecurityTokenValidator, JwtSecurityTokenHandler>();
             internalServices.AddSingleton<IMemoryCache>(new MemoryCache(cacheOptions));
-            internalServices.AddSingleton<DelegatingHandler, ClientCredentialsHandler<TConfig>>();
+            internalServices.AddTransient<DelegatingHandler, ClientCredentialsHandler<TConfig>>();
 
             var internalServiceProvider = internalServices.BuildServiceProvider();
             services.AddSingleton(internalServiceProvider.GetRequiredService<IMetadataProvider>());
             services.AddSingleton(internalServiceProvider.GetRequiredService<ICacheUtils>());
-            services.AddSingleton(internalServiceProvider.GetRequiredService<DelegatingHandler>());
+            services.AddTransient((_) => internalServiceProvider.GetRequiredService<DelegatingHandler>());
             services.AddSingleton(identityOptions);
             services.AddSingleton(messageHandler);
         }
