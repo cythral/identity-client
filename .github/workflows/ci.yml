@@ -144,9 +144,9 @@ jobs:
       - uses: ncipollo/release-action@v1
         with:
           artifacts: "${{ steps.download-nugets.outputs.download-path }}/*.nupkg,${{ steps.download-nugets.outputs.download-path }}/*.snupkg"
-          name: v${{ env.VERSION }}
           commit: ${{ github.sha }}
           token: ${{ secrets.GH_TOKEN }}
+          tag: v${{ env.VERSION }}
           prerelease: ${{ contains(env.VERSION, '-') }}
           generateReleaseNotes: true
 
