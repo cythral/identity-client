@@ -21,6 +21,8 @@ jobs:
         os: [windows-latest, ubuntu-latest, macos-latest]
 
     runs-on: ${{ matrix.os }}
+    outputs:
+      version: ${{ steps.build.outputs.version }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -34,21 +36,6 @@ jobs:
           [ ! `git rev-list --no-walk --count --merges "$sha"` ] || sha=$after
           echo "COMMIT_MESSAGE=$(git log --format=%B -n 1 $sha | tr '\n' ' ')" >> $GITHUB_ENV
 
-      - name: Set version
-        shell: bash
-        run: echo "VERSION=$(cat version.json | jq -r '.version')" >> $GITHUB_ENV
-
-      - name: Display version
-        run: echo ${{ env.VERSION }}
-
-      - name: Check for Stale Version Number
-        if: ${{ !startsWith(github.ref , 'refs/tags/v') }}
-        shell: bash
-        run: |
-          lastTaggedVersion=$(git describe --abbrev=0 --tags --always)
-          lastTaggedVersionSha=$(git rev-list -n 1 $lastTaggedVersion)
-          if [ "$lastTaggedVersion" = "v$VERSION" ] && [ "$lastTaggedVersionSha" != "${{ github.sha }}" ]; then exit 1; fi
-
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v2
 
@@ -60,6 +47,7 @@ jobs:
 
       - name: Build
         shell: bash
+        id: build
         run: dotnet build --no-restore -m -bl:obj/logs/build-${{ matrix.os }}.binlog
 
       - name: Test
@@ -103,7 +91,7 @@ jobs:
               {
                 "title": "[${{ github.repository }}] Build Failed",
                 "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
-                "description": "An error occurred while building ${{ github.repository }} ${{ env.VERSION }} on ${{ matrix.os }}",
+                "description": "An error occurred while building ${{ github.repository }} ${{ steps.build.outputs.version }} on ${{ matrix.os }}",
                 "color": 12720135
               }
             ]
@@ -125,10 +113,6 @@ jobs:
         with:
           name: nugets
 
-      - name: Set version
-        shell: bash
-        run: echo "VERSION=$(cat version.json | jq -r '.version')" >> $GITHUB_ENV
-
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v2
 
@@ -146,8 +130,8 @@ jobs:
           artifacts: "${{ steps.download-nugets.outputs.download-path }}/*.nupkg,${{ steps.download-nugets.outputs.download-path }}/*.snupkg"
           commit: ${{ github.sha }}
           token: ${{ secrets.GH_TOKEN }}
-          tag: v${{ env.VERSION }}
-          prerelease: ${{ contains(env.VERSION, '-') }}
+          tag: v${{ needs.build.outputs.version }}
+          prerelease: ${{ contains(needs.build.outputs.version, '-') }}
           generateReleaseNotes: true
 
       - name: Discord Failure Notification
@@ -160,7 +144,7 @@ jobs:
               {
                 "title": "[${{ github.repository }}] Release Failed",
                 "url": "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
-                "description": "An error occurred while releasing ${{ github.repository }} ${{ env.VERSION }}",
+                "description": "An error occurred while releasing ${{ github.repository }} ${{ needs.build.outputs.version }}",
                 "color": 12720135
               }
             ]
