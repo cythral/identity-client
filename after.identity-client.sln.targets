@@ -40,32 +40,4 @@
             <ChildSolutionProp Include="LambdajectionVersion=$(PackageVersion)" />
         </ItemGroup>
     </Target>
-
-    <Target
-        Name="GetReleaseNotes"
-        BeforeTargets="Build"
-        DependsOnTargets="RetrievePackageVersionFromTool"
-        Condition="'$(DesignTimeBuild)' != 'true'"
-    >
-        <Exec Command="dotnet json get $(MSBuildThisFileDirectory)version.json version" ConsoleToMsBuild="true" StandardOutputImportance="Low">
-            <Output TaskParameter="ConsoleOutput" PropertyName="SimpleVersion" />
-        </Exec>
-
-        <PropertyGroup>
-            <ReleaseNotesFile>$(MSBuildThisFileDirectory).github/releases/v$(SimpleVersion).md</ReleaseNotesFile>
-        </PropertyGroup>
-
-        <Error
-            Condition="!Exists('$(ReleaseNotesFile)')"
-            File="$(ReleaseNotesFile)"
-            Text="Release notes file missing."
-        />
-
-        <PropertyGroup>
-            <PackageReleaseNotes>$([System.IO.File]::ReadAllText('$(ReleaseNotesFile)'))</PackageReleaseNotes>
-        </PropertyGroup>
-
-        <Message Importance="High" Text="Version: $(PackageVersion)" />
-        <Message Importance="High" Text="Release Notes:%0A$(PackageReleaseNotes)%0A" />
-    </Target>
 </Project>
