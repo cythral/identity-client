@@ -199,6 +199,9 @@
             using (var request_ = new System.Net.Http.HttpRequestMessage())
 {%     endif -%}
             {
+                request_.Version = new System.Version(2, 0);
+                request_.VersionPolicy = System.Net.Http.HttpVersionPolicy.RequestVersionExact;
+                
 {%     for parameter in operation.HeaderParameters -%}
 {%         if parameter.IsRequired -%}
                 if ({{ parameter.VariableName }} == null)
