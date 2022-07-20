@@ -9,6 +9,6 @@
         "precision": "revision"
     },
     "publicReleaseRefSpec": [
-        "^refs/tags/v\\d\\.\\d"
+        "^refs/heads/master$"
     ]
 }
