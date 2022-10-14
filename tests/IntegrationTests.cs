@@ -30,7 +30,15 @@ namespace Brighid.Identity.Client
         Task SendImpersonateAsync(string userId, string audience);
     }
 
-    public class TestIdentityService : ITestIdentityService
+    public interface ITestIdentityService2
+    {
+        Version DefaultRequestVersion { get; }
+        HttpVersionPolicy DefaultVersionPolicy { get; }
+        Task SendAsync();
+        Task SendImpersonateAsync(string userId, string audience);
+    }
+
+    public class TestIdentityService : ITestIdentityService, ITestIdentityService2
     {
         private readonly HttpClient httpClient;
 
@@ -293,6 +301,7 @@ namespace Brighid.Identity.Client
             serviceCollection.AddSingleton<IConfiguration>(configuration);
             serviceCollection.ConfigureBrighidIdentity<CustomIdentityConfig>(configuration.GetSection("Identity"), mockHandler);
             serviceCollection.UseBrighidIdentity<ITestIdentityService, TestIdentityService>(baseServiceAddress);
+            serviceCollection.UseBrighidIdentity<ITestIdentityService2, TestIdentityService>(baseServiceAddress);
             serviceCollection.Configure<CustomIdentityConfig>(configuration.GetSection("Identity"));
 
             var provider = serviceCollection.BuildServiceProvider();
@@ -300,6 +309,8 @@ namespace Brighid.Identity.Client
 
             await service.SendImpersonateAsync(userId, audience);
 
+            Action func = () => provider.GetRequiredService<ITestIdentityService2>();
+            func.Should().NotThrow();
             mockHandler.VerifyNoOutstandingExpectation();
         }
     }
