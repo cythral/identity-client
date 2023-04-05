@@ -222,8 +222,8 @@
       },
       "Microsoft.Extensions.Options": {
         "type": "Transitive",
-        "resolved": "7.0.0",
-        "contentHash": "lP1yBnTTU42cKpMozuafbvNtQ7QcBjr/CcK3bYOGEMH55Fjt+iecXjT6chR7vbgCMqy3PG3aNQSZgo/EuY/9qQ==",
+        "resolved": "7.0.1",
+        "contentHash": "pZRDYdN1FpepOIfHU62QoBQ6zdAoTvnjxFfqAzEd9Jhb2dfhA5i6jeTdgGgcgTWFRC7oT0+3XrbQu4LjvgX1Nw==",
         "dependencies": {
           "Microsoft.Extensions.DependencyInjection.Abstractions": "7.0.0",
           "Microsoft.Extensions.Primitives": "7.0.0"
@@ -924,7 +924,7 @@
           "Microsoft.Extensions.Caching.Memory": "[7.0.0, )",
           "Microsoft.Extensions.Configuration": "[7.0.0, )",
           "Microsoft.Extensions.DependencyInjection": "[7.0.0, )",
-          "Microsoft.Extensions.Options": "[7.0.0, )",
+          "Microsoft.Extensions.Options": "[7.0.1, )",
           "Microsoft.Extensions.Options.ConfigurationExtensions": "[7.0.0, )",
           "System.IdentityModel.Tokens.Jwt": "[6.28.1, )"
         }
