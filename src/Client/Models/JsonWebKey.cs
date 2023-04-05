@@ -5,7 +5,7 @@ namespace Brighid.Identity.Client
     /// <summary>
     /// Represents a json web key used to sign a JWT.
     /// </summary>
-    public struct JsonWebKey
+    public readonly struct JsonWebKey
     {
         /// <summary>
         /// Gets or sets the ID of the Json Web Key.

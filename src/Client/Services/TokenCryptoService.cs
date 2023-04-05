@@ -21,7 +21,7 @@ namespace Brighid.Identity.Client
         private readonly HttpClient httpClient;
 
         [ThreadStatic]
-        private Dictionary<string, string>? keyIdCache;
+        private static Dictionary<string, string>? keyIdCache;
 
         public TokenCryptoService(
             HttpClient httpClient
@@ -96,7 +96,8 @@ namespace Brighid.Identity.Client
         /// <inheritdoc />
         public void ValidateAccessTokenHash(string algorithm, string hash, string accessToken)
         {
-            using var hashContext = HashAlgorithm.Create(algorithm);
+
+            using var hashContext = GetHashAlgorithm(algorithm);
             var accessTokenBytes = Encoding.ASCII.GetBytes(accessToken);
             var actualHashBytes = hashContext?.ComputeHash(accessTokenBytes) ?? Array.Empty<byte>();
             var halfwayIndex = actualHashBytes.Length / 2;
@@ -106,6 +107,19 @@ namespace Brighid.Identity.Client
             {
                 throw new InvalidAccessTokenHashException();
             }
+        }
+
+        private HashAlgorithm GetHashAlgorithm(string name)
+        {
+            return name.ToLower() switch
+            {
+                "md5" => MD5.Create(),
+                "sha1" => SHA1.Create(),
+                "sha256" => SHA256.Create(),
+                "sha384" => SHA384.Create(),
+                "sha512" => SHA512.Create(),
+                _ => throw new Exception($"Invalid hash algorithm: {name}"),
+            };
         }
     }
 }

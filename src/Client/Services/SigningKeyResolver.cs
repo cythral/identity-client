@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -32,10 +33,12 @@ namespace Brighid.Identity.Client
         public async Task<SecurityKey> ResolveSigningKey(string token, CancellationToken cancellationToken = default)
         {
             var keyId = signingKeyService.GetKeyIdForToken(token);
-            return await memoryCache.GetOrCreateAsync(
+            var signingKey = await memoryCache.GetOrCreateAsync(
                 CachePrefixes.SigningKeys + keyId,
                 (_) => signingKeyService.FetchSigningKey(keyId, cancellationToken)
-            );
+            ) ?? throw new Exception("Could not resolve signing key");
+
+            return signingKey;
         }
     }
 }

@@ -118,7 +118,7 @@ namespace Brighid.Identity.Client
             var serviceCollection = new ServiceCollection();
             var mockHandler = new MockHttpMessageHandler();
             var configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string>
+            .AddInMemoryCollection(new Dictionary<string, string?>
             {
                 ["Identity:IdentityServerUri"] = baseIdpAddress.ToString(),
                 ["Identity:ClientId"] = clientId,
@@ -146,7 +146,7 @@ namespace Brighid.Identity.Client
             var serviceCollection = new ServiceCollection();
             var mockHandler = new MockHttpMessageHandler();
             var configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string>
+            .AddInMemoryCollection(new Dictionary<string, string?>
             {
                 ["Identity:IdentityServerUri"] = baseIdpAddress.ToString(),
                 ["Identity:ClientId"] = clientId,
@@ -174,7 +174,7 @@ namespace Brighid.Identity.Client
             var serviceCollection = new ServiceCollection();
             var mockHandler = new MockHttpMessageHandler();
             var configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string>
+            .AddInMemoryCollection(new Dictionary<string, string?>
             {
                 ["Identity:IdentityServerUri"] = baseIdpAddress.ToString(),
                 ["Identity:ClientId"] = clientId,
@@ -204,7 +204,7 @@ namespace Brighid.Identity.Client
             var (idToken, accessToken) = CreateTokenPair(baseIdpAddress);
             var serviceCollection = new ServiceCollection();
             var configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string>
+            .AddInMemoryCollection(new Dictionary<string, string?>
             {
                 ["Identity:IdentityServerUri"] = baseIdpAddress.ToString(),
                 ["Identity:ClientId"] = clientId,
@@ -258,7 +258,7 @@ namespace Brighid.Identity.Client
 
             var serviceCollection = new ServiceCollection();
             var configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(new Dictionary<string, string>
+            .AddInMemoryCollection(new Dictionary<string, string?>
             {
                 ["Identity:IdentityServerUri"] = baseIdpAddress.ToString(),
                 ["Identity:ClientId"] = clientId,
