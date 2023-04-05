@@ -25,7 +25,7 @@ namespace Brighid.Identity.Client
             )
             {
                 var configuration = new ConfigurationBuilder()
-                .AddInMemoryCollection(new Dictionary<string, string>
+                .AddInMemoryCollection(new Dictionary<string, string?>
                 {
                     ["Identity:IdentityServerUri"] = url.ToString(),
                     ["Identity:ClientId"] = clientId,
