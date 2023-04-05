@@ -385,12 +385,12 @@
       "Brighid.Identity.Client": {
         "type": "Project",
         "dependencies": {
-          "Microsoft.Extensions.Caching.Memory": "6.0.1",
-          "Microsoft.Extensions.Configuration": "6.0.1",
-          "Microsoft.Extensions.DependencyInjection": "6.0.1",
-          "Microsoft.Extensions.Options": "6.0.0",
-          "Microsoft.Extensions.Options.ConfigurationExtensions": "6.0.0",
-          "System.IdentityModel.Tokens.Jwt": "6.24.0"
+          "Microsoft.Extensions.Caching.Memory": "[6.0.1, )",
+          "Microsoft.Extensions.Configuration": "[6.0.1, )",
+          "Microsoft.Extensions.DependencyInjection": "[6.0.1, )",
+          "Microsoft.Extensions.Options": "[6.0.0, )",
+          "Microsoft.Extensions.Options.ConfigurationExtensions": "[6.0.0, )",
+          "System.IdentityModel.Tokens.Jwt": "[6.24.0, )"
         }
       }
     }

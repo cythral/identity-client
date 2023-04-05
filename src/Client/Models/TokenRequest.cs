@@ -6,7 +6,7 @@ namespace Brighid.Identity.Client
     /// <summary>
     /// Represents a request to retrieve a token.
     /// </summary>
-    public struct TokenRequest
+    public readonly struct TokenRequest
     {
         /// <summary>
         /// Gets or sets the ID of the user to impersonate (impersonate exchanges only).
