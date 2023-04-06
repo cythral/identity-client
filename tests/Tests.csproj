@@ -13,7 +13,7 @@
         <PackageReference Include="AutoFixture.NUnit3" Version="4.17.0" />
         <PackageReference Include="AWSSDK.KeyManagementService" Version="3.7.101.82" />
         <PackageReference Include="FluentAssertions" Version="5.10.3" />
-        <PackageReference Include="NSubstitute" Version="4.2.2" />
+        <PackageReference Include="NSubstitute" Version="4.4.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
         <PackageReference Include="nunit" Version="3.13.2" />
         <PackageReference Include="NUnit3TestAdapter" Version="4.0.0" />
