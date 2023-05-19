@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -54,12 +53,7 @@ namespace Brighid.Identity.ClientGenerator
                 throw new Exception("Template Directory should be defined.");
             }
 
-            var client = new HttpClient
-            {
-                DefaultRequestVersion = new Version(2, 0),
-            };
-
-            var swaggerString = await client.GetStringAsync("https://identity.brigh.id/swagger/v1/swagger.json");
+            var swaggerString = GetSwaggerFile(context);
             var document = await OpenApiDocument.FromJsonAsync(swaggerString);
             var settings = new CSharpClientGeneratorSettings
             {
@@ -71,7 +65,8 @@ namespace Brighid.Identity.ClientGenerator
                 {
                     TemplateDirectory = templateDirectory,
                     Namespace = "Brighid.Identity.Client",
-                    JsonLibrary = CSharpJsonLibrary.SystemTextJson
+                    JsonLibrary = CSharpJsonLibrary.SystemTextJson,
+                    PropertyNameGenerator = new PropertyNameGenerator(),
                 }
             };
 
@@ -138,6 +133,13 @@ namespace Brighid.Identity.ClientGenerator
             yield return ParseStatement("var baseUri = GetIdentityServerApiBaseUri(services);");
             yield return ParseStatement($"services.UseBrighidIdentityWithHttp2<{interfaceName}, {implementationName}>(baseUri);");
             yield return ParseStatement($"services.UseBrighidIdentityWithHttp2<{interfaceName}Factory, {implementationName}Factory>(baseUri);");
+        }
+
+        private static string GetSwaggerFile(GeneratorExecutionContext context)
+        {
+            var swaggerFileQuery = from file in context.AdditionalFiles where file.Path.Contains("swagger.json") select file;
+            var swaggerFile = swaggerFileQuery.First();
+            return swaggerFile.GetText()!.ToString();
         }
     }
 }

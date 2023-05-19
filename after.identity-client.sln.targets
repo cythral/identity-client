@@ -31,11 +31,11 @@
         <Exec Command="dotnet format $(MSBuildThisFileDirectory)brighid-discord-adapter.sln --fix-style info" />
     </Target>
 
-    <Target Name="RetrievePackageVersionFromTool" DependsOnTargets="RestoreTools" AfterTargets="Build" Condition="'$(DesignTimeBuild)' != 'true'">
+    <Target Name="RetrievePackageVersionFromTool" DependsOnTargets="RestoreTools" AfterTargets="Build" Condition="'$(DesignTimeBuild)' != 'true' and '$(GITHUB_OUTPUT)' != ''">
         <Exec Command="dotnet nbgv get-version -v NuGetPackageVersion" ConsoleToMsBuild="true" StandardOutputImportance="Low">
             <Output TaskParameter="ConsoleOutput" PropertyName="PackageVersion" />
         </Exec>
 
-        <Message Text="%0a::set-output name=version::$(PackageVersion)" Importance="High" />
+        <WriteLinesToFile Lines="version=$(PackageVersion)" File="$(GITHUB_OUTPUT)" />
     </Target>
 </Project>

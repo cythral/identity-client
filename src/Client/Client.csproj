@@ -9,7 +9,10 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <SwaggerFilePath>$(MSBuildThisFileDirectory)../../swagger.json</SwaggerFilePath>
+    <CoreCompileDependsOn>AddSwaggerDocToAdditionalFiles;$(CoreCompileDependsOn)</CoreCompileDependsOn>
   </PropertyGroup>
+  
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="7.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="7.0.0" />
@@ -18,12 +21,22 @@
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="7.0.0" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.30.1" />
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="../ClientGenerator/ClientGenerator.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" PrivateAssets="all" />
   </ItemGroup>
+
+  <Target Name="AddSwaggerDocToAdditionalFiles">
+    <CallTarget Targets="DownloadSwaggerDoc" Condition="!Exists('$(SwaggerFilePath)')" />
+    <ItemGroup>
+      <AdditionalFiles Include="$(SwaggerFilePath)" />
+    </ItemGroup>
+  </Target>
+
   <ItemGroup>
     <CompilerVisibleProperty Include="TemplateDirectory" />
   </ItemGroup>
+
   <ItemGroup>
     <InternalsVisibleTo Include="Tests" />
     <InternalsVisibleTo Include="DynamicProxyGenAssembly2" />
