@@ -6,33 +6,11 @@
   },
   "servers": [
     {
-      "url": "https://identity.brigh.id"
+      "url": "https://identity.brigh.id/"
     }
   ],
   "paths": {
-    "/account/link/{provider}": {
-      "get": {
-        "tags": [
-          "Account"
-        ],
-        "parameters": [
-          {
-            "name": "provider",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/applications/{id}": {
+    "/applications/{id}": {
       "get": {
         "tags": [
           "Application"
@@ -170,7 +148,7 @@
         }
       }
     },
-    "/api/applications": {
+    "/applications": {
       "post": {
         "tags": [
           "Application"
@@ -219,72 +197,7 @@
         }
       }
     },
-    "/login": {
-      "get": {
-        "tags": [
-          "Login"
-        ],
-        "parameters": [
-          {
-            "name": "redirect_uri",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "default": "/"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Login"
-        ],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "Email": {
-                    "type": "string"
-                  },
-                  "Password": {
-                    "type": "string",
-                    "format": "password"
-                  },
-                  "RedirectUri": {
-                    "type": "string",
-                    "format": "uri"
-                  }
-                }
-              },
-              "encoding": {
-                "Email": {
-                  "style": "form"
-                },
-                "Password": {
-                  "style": "form"
-                },
-                "RedirectUri": {
-                  "style": "form"
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/login-providers/{loginProvider}/{providerKey}": {
+    "/login-providers/{loginProvider}/{providerKey}": {
       "get": {
         "tags": [
           "LoginProvider"
@@ -361,7 +274,7 @@
         }
       }
     },
-    "/api/login-providers/{loginProvider}/{providerKey}/enabled": {
+    "/login-providers/{loginProvider}/{providerKey}/enabled": {
       "put": {
         "tags": [
           "LoginProvider"
@@ -411,31 +324,7 @@
         }
       }
     },
-    "/logout": {
-      "get": {
-        "tags": [
-          "Logout"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/oauth2/token": {
-      "post": {
-        "tags": [
-          "OAuth"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/roles": {
+    "/roles": {
       "get": {
         "tags": [
           "Role"
@@ -519,7 +408,7 @@
         }
       }
     },
-    "/api/roles/{id}": {
+    "/roles/{id}": {
       "get": {
         "tags": [
           "Role"
@@ -654,7 +543,7 @@
         }
       }
     },
-    "/api/roles/{name}": {
+    "/roles/{name}": {
       "get": {
         "tags": [
           "Role"
@@ -693,79 +582,7 @@
         }
       }
     },
-    "/signup": {
-      "get": {
-        "tags": [
-          "Signup"
-        ],
-        "parameters": [
-          {
-            "name": "redirect_uri",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "default": "/"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Signup"
-        ],
-        "requestBody": {
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "Email": {
-                    "type": "string"
-                  },
-                  "Password": {
-                    "type": "string",
-                    "format": "password"
-                  },
-                  "ConfirmPassword": {
-                    "type": "string",
-                    "format": "password"
-                  },
-                  "RedirectUri": {
-                    "type": "string",
-                    "format": "uri"
-                  }
-                }
-              },
-              "encoding": {
-                "Email": {
-                  "style": "form"
-                },
-                "Password": {
-                  "style": "form"
-                },
-                "ConfirmPassword": {
-                  "style": "form"
-                },
-                "RedirectUri": {
-                  "style": "form"
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Success"
-          }
-        }
-      }
-    },
-    "/api/users/{userId}": {
+    "/users/{userId}": {
       "get": {
         "tags": [
           "User"
@@ -805,7 +622,7 @@
         }
       }
     },
-    "/api/users/{userId}/debug-mode": {
+    "/users/{userId}/debug-mode": {
       "put": {
         "tags": [
           "User"
@@ -848,7 +665,7 @@
         }
       }
     },
-    "/api/users/{userId}/logins": {
+    "/users/{userId}/logins": {
       "post": {
         "tags": [
           "User"
