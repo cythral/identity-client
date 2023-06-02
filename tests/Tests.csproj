@@ -11,7 +11,7 @@
     <ItemGroup>
         <PackageReference Include="AutoFixture.AutoNSubstitute" Version="4.18.0" />
         <PackageReference Include="AutoFixture.NUnit3" Version="4.18.0" />
-        <PackageReference Include="AWSSDK.KeyManagementService" Version="3.7.102.14" />
+        <PackageReference Include="AWSSDK.KeyManagementService" Version="3.7.102.16" />
         <PackageReference Include="FluentAssertions" Version="6.11.0" />
         <PackageReference Include="NSubstitute" Version="5.0.0" />
         <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.6.0" />
