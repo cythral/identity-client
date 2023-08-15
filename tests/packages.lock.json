@@ -24,11 +24,11 @@
       },
       "AWSSDK.KeyManagementService": {
         "type": "Direct",
-        "requested": "[3.7.200.17, )",
-        "resolved": "3.7.200.17",
-        "contentHash": "qtAMkk854WgRpsw3Ci9EE5rdKq0YYqOqJDvq0O5RPxQlTe3IEJeAn8+tcziQPKN3/ZjJzTIWaRilk8yB22quQQ==",
+        "requested": "[3.7.200.18, )",
+        "resolved": "3.7.200.18",
+        "contentHash": "C3NgSmZSxbpijvKPACEhRgRHijFdCXDm/Kx8C/ws/kFSHJykUvj+qjG7mC5wo931feKx3Hs5lBxLsUYEhIHHqw==",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.200.17, 4.0.0)"
+          "AWSSDK.Core": "[3.7.200.18, 4.0.0)"
         }
       },
       "coverlet.collector": {
@@ -113,8 +113,8 @@
       },
       "AWSSDK.Core": {
         "type": "Transitive",
-        "resolved": "3.7.200.17",
-        "contentHash": "qF2dYDpK+JlEmWxQqm90xVtDw0tIUwoLwA6WO36AtOeFvqLzB69xQZg+OQRoEimvZlzwJiByknM/BMlKXPncSQ=="
+        "resolved": "3.7.200.18",
+        "contentHash": "l0+THU4WU21fZPziP0vxYFYjrvBLnm5ftltaqWe8XsJKdYfbeVeq93qHcEXdnW207xiNAbGEZUv1D2Pw+QvrIw=="
       },
       "Castle.Core": {
         "type": "Transitive",
