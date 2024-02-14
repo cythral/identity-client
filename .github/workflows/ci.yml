@@ -25,7 +25,7 @@ jobs:
     outputs:
       version: ${{ steps.build.outputs.version }}
     steps:
-      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
         with:
           fetch-depth: 0
 
@@ -104,7 +104,7 @@ jobs:
       name: Production
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
     steps:
-      - uses: actions/checkout@3df4ab11eba7bda6032a0b82a6bb43b11571feac # v4
+      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4
         with:
           fetch-depth: 0
 
